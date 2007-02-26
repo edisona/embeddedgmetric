@@ -34,6 +34,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#define CONVERT_TO_STRINGS
+
 static const char* typestrings[] = {
     "", "string", "uint16", "int16", "uint32", "int32", "float", "double"
 };
@@ -45,13 +47,16 @@ int gmetric_message_create_xdr(char* buffer, uint len,
     XDR x;
     xdrmem_create(&x, buffer, len, XDR_ENCODE);
 
-#if 1
+#ifdef CONVERT_TO_STRINGS
+    char valbuf[64];
+    char* valbufptr = valbuf;
+
     enum_t tmp = 0;
-    if (!xdr_enum (&x, (enum_t *) &tmp)) {
+    if (!xdr_enum (&x, (enum_t*) &tmp)) {
         return -1;
     }
 #else
-    if (!xdr_enum (&x, (enum_t *) &msg->type)) {
+    if (!xdr_enum (&x, (enum_t*) &msg->type)) {
         return -1;
     }
 #endif
@@ -70,34 +75,77 @@ int gmetric_message_create_xdr(char* buffer, uint len,
 
     switch (msg->type) {
     case GANGLIA_VALUE_UNSIGNED_SHORT:
+#ifdef CONVERT_TO_STRINGS
+        snprintf(valbuf, sizeof(valbuf), "%hu", msg->value.v_ushort);
+        if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
+            return -1;
+        }
+#else
         if (!xdr_u_short(&x, (unsigned short*) &msg->value.v_ushort)) {
             return -1;
         }
+#endif
         break;
     case GANGLIA_VALUE_SHORT:
+#ifdef CONVERT_TO_STRINGS
+        snprintf(valbuf, sizeof(valbuf), "%hd", msg->value.v_ushort);
+        if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
+            return -1;
+        }
+#else
         if (!xdr_short(&x, (short*) &msg->value.v_short)) {
             return -1;
         }
+#endif
         break;
     case GANGLIA_VALUE_UNSIGNED_INT:
+#ifdef CONVERT_TO_STRINGS
+        snprintf(valbuf, sizeof(valbuf), "%u", msg->value.v_uint);
+        if (!xdr_string(&x,  &valbufptr, sizeof(valbuf))) {
+            return -1;
+        }
+#else
         if (!xdr_u_int(&x, (unsigned int*) &msg->value.v_uint)) {
             return -1;
         }
+#endif
         break;
     case GANGLIA_VALUE_INT:
+#ifdef CONVERT_TO_STRINGS
+        snprintf(valbuf, sizeof(valbuf), "%d", msg->value.v_int);
+        if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
+            return -1;
+        }
+#else
         if (!xdr_int(&x, (int*) &msg->value.v_int)) {
             return -1;
         }
+#endif
         break;
     case GANGLIA_VALUE_FLOAT:
+#ifdef CONVERT_TO_STRINGS
+        snprintf(valbuf, sizeof(valbuf), "%f", msg->value.v_float);
+        if (!xdr_string(&x,  &valbufptr, sizeof(valbuf))) {
+            return -1;
+        }
+#else
         if (!xdr_float(&x, (float*) &msg->value.v_float)) {
             return -1;
         }
+#endif
         break;
     case GANGLIA_VALUE_DOUBLE:
+#ifdef CONVERT_TO_STRINGS
+        snprintf(valbuf, sizeof(valbuf), "%f", msg->value.v_double);
+        if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
+            printf("DOUBLE\n");
+            return -1;
+        }
+#else
         if (!xdr_double(&x, (double*) &msg->value.v_double)) {
             return -1;
         }
+#endif
         break;
     case GANGLIA_VALUE_STRING:
         //printf("STRING: %s\n", msg->value.v_string);
@@ -110,27 +158,24 @@ int gmetric_message_create_xdr(char* buffer, uint len,
             return -1;
         }
         break;
-    }
+    }  /* end switch */
 
-    //printf("UNITS: %s\n", msg->units);
     if (!xdr_string(&x, (char**) &msg->units, ~0)) {
         return -1;
     }
 
-    //printf("SLOPE: %d\n", msg->slope);
     if (!xdr_u_int(&x, (u_int*) &msg->slope)) {
         return -1;
     }
 
-    //printf("Tmax: %d\n", msg->tmax);
     if (!xdr_u_int(&x, (u_int*) &msg->tmax)) {
         return -1;
     }
 
-    //printf("Dmax: %d\n", msg->dmax);
     if (!xdr_u_int(&x, (u_int*) &msg->dmax)) {
         return -1;
     }
+
     return xdr_getpos(&x);
 }
 
@@ -189,9 +234,9 @@ int gmetric_open(gmetric_t* g, const char* addr, int port)
     return 1;
 }
 
-int gemtric_send_xdr(gmetric_t* g, char* buf, int len)
+int gmetric_send_xdr(gmetric_t* g, const char* buf, int len)
 {
-    return sendto(g->s, buf, len, 0,
+    return sendto(g->s, (char*)buf, len, 0,
                   (struct sockaddr*)&g->sa, sizeof(struct sockaddr_in));
 }
 
@@ -199,7 +244,7 @@ int gmetric_send(gmetric_t* g, const gmetric_message_t* msg)
 {
     char buf[GANGLIA_MAX_MESSAGE_LEN];
     int len = gmetric_message_create_xdr(buf, sizeof(buf), msg);
-    return len;
+    return gmetric_send_xdr(g, buf, len);
 }
 
 /**

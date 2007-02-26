@@ -42,8 +42,10 @@ void testSend()
 {
     gmetric_message_t msg;
 	msg.type = GANGLIA_VALUE_STRING;
-	msg.name ="foo";
+    /* 	msg.type = GANGLIA_VALUE_DOUBLE; */
+ 	msg.name ="foo";
 	msg.value.v_string = "bar";
+    /* msg.value.v_double = 1.2345; */
     msg.typestr = 0;
     msg.units = "";
 	msg.slope = 0;
