@@ -171,6 +171,12 @@ void gmetric_close(gmetric_t* g);
 int gmetric_message_create_xdr(char* buffer, uint len,
                                const gmetric_message_t* msg);
 
+
+/** \brief clear out a gmetric_message to know defaults
+ *
+ */
+void gmetric_message_clear(gmetric_message_t* msg);
+
 /** \brief validate a gmetric message
  *
  * \return 1 if ok, 0 if bad

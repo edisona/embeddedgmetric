@@ -257,3 +257,15 @@ void gmetric_close(gmetric_t* g)
     }
     g->s = -1;
 }
+
+void gmetric_message_clear(gmetric_message_t* msg)
+{
+    msg->type = GANGLIA_VALUE_UNKNOWN;
+    msg->name = "";
+    msg->units = "";
+    msg->typestr = "";
+    msg->slope = 0;
+    msg->tmax = 60;
+    msg->dmax = 0;
+    msg->value.v_double = 0;
+}

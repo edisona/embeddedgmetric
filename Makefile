@@ -4,3 +4,6 @@ foo: embeddedgmetric.c embeddedgmetric.c
 
 gtest: embeddedgmetric.c embeddedgmetric.c gmetric_test.c
 	${CC} -o gtest -Wall -g embeddedgmetric.c gmetric_test.c
+
+clean:
+	rm -rf gtest *~
