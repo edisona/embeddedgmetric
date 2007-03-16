@@ -138,7 +138,6 @@ int gmetric_message_create_xdr(char* buffer, uint len,
 #ifdef CONVERT_TO_STRINGS
         snprintf(valbuf, sizeof(valbuf), "%f", msg->value.v_double);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
-            printf("DOUBLE\n");
             return -1;
         }
 #else
