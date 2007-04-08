@@ -79,6 +79,15 @@ enum Ganglia_value_types {
 
 typedef enum Ganglia_value_types Ganglia_value_types;
 
+enum Ganglia_slope_types {
+    GANGLIA_SLOPE_ZERO = 0,
+    GANLIGA_SLOPE_POSITIVE = 1,
+    GANGLIA_SLOPE_NEGATIVE = 2,
+    GANGLIA_SLOPE_BOTH = 3,
+    GANGLIA_SLOPE_UNSPECIFIED =4
+};
+
+typedef enum Ganglia_slope_types ganglia_slope_t;
 
 /**
  * Control structure and shared buffers

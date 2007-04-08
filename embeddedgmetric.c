@@ -37,8 +37,9 @@
 #define CONVERT_TO_STRINGS
 
 static const char* typestrings[] = {
-    "", "string", "uint16", "int16", "uint32", "int32", "float", "double"
+    "", "string", "uint16", "int16", "uint32", "int32", "float", "double", "timestamp"
 };
+/* TODO not sure how 'timestamp' is used */
 
 int gmetric_message_create_xdr(char* buffer, uint len,
                                const gmetric_message_t* msg)
@@ -263,7 +264,7 @@ void gmetric_message_clear(gmetric_message_t* msg)
     msg->name = "";
     msg->units = "";
     msg->typestr = "";
-    msg->slope = 0;
+    msg->slope = GANGLIA_SLOPE_BOTH;
     msg->tmax = 60;
     msg->dmax = 0;
     msg->value.v_double = 0;
