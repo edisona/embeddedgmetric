@@ -71,19 +71,28 @@ class Gmetric:
 if __name__ == '__main__':
     import optparse
     parser = optparse.OptionParser()
-    parser.add_option("-m", "--host",  dest="host",  default="127.0.0.1")
-    parser.add_option("-p", "--port",  dest="port",  default="8649")
-    parser.add_option("-u", "--units", dest="units", default="")
-    parser.add_option("-n", "--name",  dest="name",  default="")
-    parser.add_option("-v", "--value", dest="value", default="")
-    parser.add_option("-s", "--slope", dest="slope", default="both")
-    parser.add_option("-t", "--type",  dest="type",  default="")
-    parser.add_option("-x", "--tmax",  dest="tmax",  default="60")
-    parser.add_option("-d", "--dmax",  dest="dmax",  default="0")
-    parser.add_option("-i", "--protocol", dest="protocol", default="udp")
+    parser.add_option("", "--protocol", dest="protocol", default="udp",
+                      help="The gmetric internet protocol, either udp or multicast, default udp")
+    parser.add_option("", "--host",  dest="host",  default="127.0.0.1",
+                      help="The gmond host to recieve the data")
+    parser.add_option("", "--port",  dest="port",  default="8649",
+                      help="The gmond port to recieve the data")
+    parser.add_option("", "--name",  dest="name",  default="",
+                      help="The name of the metric")
+    parser.add_option("", "--value", dest="value", default="",
+                      help="The value of the metric")
+    parser.add_option("", "--units", dest="units", default="",
+                      help="The units for the value, e.g. 'kb/sec'")
+    parser.add_option("", "--slope", dest="slope", default="both",
+                      help="The sign of the derivative of the value over time, one of zero, positive, negative, both, default both")
+    parser.add_option("", "--type",  dest="type",  default="",
+                      help="The value data type, one of string, int8, uint8, int16, uint16, int32, uint32, float, double")
+    parser.add_option("", "--tmax",  dest="tmax",  default="60",
+                      help="The maximum time in seconds between gmetric calls, default 60")
+    parser.add_option("", "--dmax",  dest="dmax",  default="0",
+                      help="The lifetime in seconds of this metric, default=0, meaning unlimited")
     (options,args) = parser.parse_args()
 
     g = Gmetric(options.host, options.port, options.protocol)
     g.send(options.name, options.value, options.type, options.units,
            options.slope, options.tmax, options.dmax)
-
