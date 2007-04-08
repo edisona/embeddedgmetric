@@ -48,7 +48,6 @@ int gmetric_message_create_xdr(char* buffer, uint len,
     XDR x;
     xdrmem_create(&x, buffer, len, XDR_ENCODE);
 
-#ifdef CONVERT_TO_STRINGS
     char valbuf[64];
     char* valbufptr = valbuf;
 
@@ -56,11 +55,6 @@ int gmetric_message_create_xdr(char* buffer, uint len,
     if (!xdr_enum (&x, (enum_t*) &tmp)) {
         return -1;
     }
-#else
-    if (!xdr_enum (&x, (enum_t*) &msg->type)) {
-        return -1;
-    }
-#endif
 
     const char* typestr = typestrings[msg->type];
     if (msg->typestr && msg->typestr[0] != 0) {
@@ -76,79 +70,42 @@ int gmetric_message_create_xdr(char* buffer, uint len,
 
     switch (msg->type) {
     case GANGLIA_VALUE_UNSIGNED_SHORT:
-#ifdef CONVERT_TO_STRINGS
         snprintf(valbuf, sizeof(valbuf), "%hu", msg->value.v_ushort);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
-#else
-        if (!xdr_u_short(&x, (unsigned short*) &msg->value.v_ushort)) {
-            return -1;
-        }
-#endif
         break;
     case GANGLIA_VALUE_SHORT:
-#ifdef CONVERT_TO_STRINGS
         snprintf(valbuf, sizeof(valbuf), "%hd", msg->value.v_ushort);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
-#else
-        if (!xdr_short(&x, (short*) &msg->value.v_short)) {
-            return -1;
-        }
-#endif
         break;
     case GANGLIA_VALUE_UNSIGNED_INT:
-#ifdef CONVERT_TO_STRINGS
         snprintf(valbuf, sizeof(valbuf), "%u", msg->value.v_uint);
         if (!xdr_string(&x,  &valbufptr, sizeof(valbuf))) {
             return -1;
         }
-#else
-        if (!xdr_u_int(&x, (unsigned int*) &msg->value.v_uint)) {
-            return -1;
-        }
-#endif
         break;
     case GANGLIA_VALUE_INT:
-#ifdef CONVERT_TO_STRINGS
         snprintf(valbuf, sizeof(valbuf), "%d", msg->value.v_int);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
-#else
-        if (!xdr_int(&x, (int*) &msg->value.v_int)) {
-            return -1;
-        }
-#endif
         break;
     case GANGLIA_VALUE_FLOAT:
-#ifdef CONVERT_TO_STRINGS
         snprintf(valbuf, sizeof(valbuf), "%f", msg->value.v_float);
         if (!xdr_string(&x,  &valbufptr, sizeof(valbuf))) {
             return -1;
         }
-#else
-        if (!xdr_float(&x, (float*) &msg->value.v_float)) {
-            return -1;
-        }
-#endif
         break;
     case GANGLIA_VALUE_DOUBLE:
-#ifdef CONVERT_TO_STRINGS
         snprintf(valbuf, sizeof(valbuf), "%f", msg->value.v_double);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
-#else
-        if (!xdr_double(&x, (double*) &msg->value.v_double)) {
-            return -1;
-        }
-#endif
         break;
     case GANGLIA_VALUE_STRING:
-        //printf("STRING: %s\n", msg->value.v_string);
         if (!xdr_string(&x, (char**) &msg->value.v_string, ~0)) {
             return -1;
         }
