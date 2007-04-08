@@ -1,9 +1,11 @@
 
-foo: embeddedgmetric.c embeddedgmetric.c
-	${CC} -o gmetric -Wall -g embeddedgmetric.c
+
+all: gtest
 
 gtest: embeddedgmetric.c embeddedgmetric.c gmetric_test.c
 	${CC} -o gtest -Wall -g embeddedgmetric.c gmetric_test.c
 
 clean:
-	rm -rf gtest *~
+	rm -rf gtest
+	find . -name '*~' | xargs rm -f
+	find . -name '*.pyc' | xargs rm -f

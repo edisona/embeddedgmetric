@@ -28,7 +28,7 @@ void testCreate()
     printf("\nMSG LEN: %d\n", len);
 	int i = 0;
     for (i = 0; i < len; ++i) {
-        printf("%02x ", (unsigned char)(buffer[i]));
+        printf("%02x", (unsigned char)(buffer[i]));
     }
     printf("%s", "\n");
 #endif
