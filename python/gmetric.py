@@ -7,10 +7,14 @@ import binhex
 class Gmetric:
     slope = {'zero':0, 'positive':1, 'negative':2, 'both':3, 'unspecified':4}
     type = ('', 'string', 'uint16', 'int16', 'uint32', 'int32', 'float', 'double', 'timestamp')
-
-    def __init__(self, host, port):
+    protocol = ('udp', 'multicast')
+    def __init__(self, host, port, protocol):
+        if protocol not in self.protocol:
+            raise ValueError("Protocol must be one of: " + str(self.protocol))
         self.msg = xdrlib.Packer()
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        if protocol == 'multicast':
+            self.socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 20)
         self.hostport = (host, int(port))
         #self.socket.connect(self.hostport)
 
@@ -51,9 +55,10 @@ if __name__ == '__main__':
     parser.add_option("-t", "--type",  dest="type",  default="")
     parser.add_option("-x", "--tmax",  dest="tmax",  default="60")
     parser.add_option("-d", "--dmax",  dest="dmax",  default="0")
+    parser.add_option("-i", "--protocol", dest="protocol",  default="udp")
     (options,args) = parser.parse_args()
 
-    g = Gmetric(options.host, options.port)
+    g = Gmetric(options.host, options.port, options.protocol)
     g.send(options.name, options.value, options.type, options.units,
            options.slope, options.tmax, options.dmax)
 
