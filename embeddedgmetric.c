@@ -28,6 +28,7 @@
  */
 
 #include "embeddedgmetric.h"
+#include "modp_numtoa.h"
 #include <stdio.h>
 #include <netdb.h>
 #include <rpc/rpc.h>
@@ -70,37 +71,37 @@ int gmetric_message_create_xdr(char* buffer, uint len,
 
     switch (msg->type) {
     case GANGLIA_VALUE_UNSIGNED_SHORT:
-        snprintf(valbuf, sizeof(valbuf), "%hu", msg->value.v_ushort);
+        modp_uitoa10(msg->value.v_ushort, valbuf);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
         break;
     case GANGLIA_VALUE_SHORT:
-        snprintf(valbuf, sizeof(valbuf), "%hd", msg->value.v_ushort);
+        modp_itoa10(msg->value.v_ushort, valbuf);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
         break;
     case GANGLIA_VALUE_UNSIGNED_INT:
-        snprintf(valbuf, sizeof(valbuf), "%u", msg->value.v_uint);
+        modp_uitoa10(msg->value.v_uint, valbuf);
         if (!xdr_string(&x,  &valbufptr, sizeof(valbuf))) {
             return -1;
         }
         break;
     case GANGLIA_VALUE_INT:
-        snprintf(valbuf, sizeof(valbuf), "%d", msg->value.v_int);
+        modp_itoa10(msg->value.v_int, valbuf);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
         break;
     case GANGLIA_VALUE_FLOAT:
-        snprintf(valbuf, sizeof(valbuf), "%f", msg->value.v_float);
+        modp_dtoa(msg->value.v_float, valbuf, 6);
         if (!xdr_string(&x,  &valbufptr, sizeof(valbuf))) {
             return -1;
         }
         break;
     case GANGLIA_VALUE_DOUBLE:
-        snprintf(valbuf, sizeof(valbuf), "%f", msg->value.v_double);
+        modp_dtoa(msg->value.v_double, valbuf, 6);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
