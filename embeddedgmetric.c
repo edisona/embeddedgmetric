@@ -29,7 +29,6 @@
 
 #include "embeddedgmetric.h"
 #include "modp_numtoa.h"
-#include <stdio.h>
 #include <netdb.h>
 #include <rpc/rpc.h>
 #include <unistd.h>

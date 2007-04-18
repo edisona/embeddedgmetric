@@ -3,7 +3,7 @@
 all: gtest
 
 gtest: embeddedgmetric.c embeddedgmetric.c modp_numtoa.c gmetric_test.c
-	${CC} -o gtest -Wall -g embeddedgmetric.c modp_numtoa.c gmetric_test.c
+	${CC} -o gtest -O3 -Wall -g embeddedgmetric.c modp_numtoa.c gmetric_test.c
 
 .PHONY: test clean
 test: gtest
