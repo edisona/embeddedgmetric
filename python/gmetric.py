@@ -24,6 +24,10 @@
 # THE SOFTWARE.
 #
 
+#
+# Version 1.0 - 21-April2-2007
+#
+
 import xdrlib
 import socket
 
