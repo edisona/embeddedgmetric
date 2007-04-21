@@ -148,10 +148,7 @@ void gmetric_create(gmetric_t* g)
     g->s = -1;
 }
 
-/**
- * open up a socket
- */
-int gmetric_open(gmetric_t* g, const char* addr, int port)
+int gmetric_open_raw(gmetric_t* g, uint32_t ip, int port)
 {
     if (g->s == -1) {
         gmetric_close(g);
@@ -164,11 +161,31 @@ int gmetric_open(gmetric_t* g, const char* addr, int port)
 
     memset(&g->sa, 0, sizeof(struct sockaddr_in));
     g->sa.sin_family = AF_INET;
-    g->sa.sin_port = htons(port);
+    if (g->s == -1) {
+        gmetric_close(g);
+    }
+    g->s = -1;
+    g->s = socket(AF_INET, SOCK_DGRAM,  IPPROTO_UDP);
+    if (g->s == -1) {
+        return 0;
+    }
 
+    memset(&g->sa, 0, sizeof(struct sockaddr_in));
+    g->sa.sin_family = AF_INET;
+    g->sa.sin_port = htons(port);
+    memcpy(&(g->sa.sin_addr), &ip, sizeof(ip));
+    return 1;
+}
+
+/*
+ *  This is really a wrapper to gethostbyname
+ */
+int gmetric_open(gmetric_t* g, const char* addr, int port)
+{
     struct hostent* result = NULL;
 #if 0
     /* super annoying thread safe version */
+    /* linux 6-arg version                */
     struct hostent he;
     char tmpbuf[1024];
     int local_errno = 0;
@@ -178,17 +195,23 @@ int gmetric_open(gmetric_t* g, const char* addr, int port)
         return 0;
     }
 #else
-    /* thread un-safe?? */
+    /* Windows, HP-UX 11 and AIX 5 is thread safe */
+    /* http://daniel.haxx.se/projects/portability/ */
+    /* Mac OS X 10.2+ is thread safe */
+    /* http://developer.apple.com/technotes/tn2002/tn2053.html */
     result = gethostbyname(addr);
 #endif
 
-    if (result == NULL) {
+    /* no result? no result2? not ip4? */
+    if (result == NULL || result->h_addr_list[0] == NULL ||
+        result->h_length != 4) {
         gmetric_close(g);
         return 0;
     }
-    memcpy(&g->sa.sin_addr, result->h_addr_list[0], result->h_length);
 
-    return 1;
+    /* h_addr_list[0] is raw memory */
+    uint32_t* ip = (uint32_t*) result->h_addr_list[0];
+    return gmetric_open_raw(g, *ip, port);
 }
 
 int gmetric_send_xdr(gmetric_t* g, const char* buf, int len)

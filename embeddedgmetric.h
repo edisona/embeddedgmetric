@@ -46,7 +46,7 @@
  *    msg.name = "foo";
  *    msg.value = "bar";
  *    msg.unit = "no units";
- *    msg.slope = // TBD;
+ *    msg.slope = GANGLIA_SLOPE_BOTH;
  *    msg.tmax = 120;
  *    msg.dmax = 0;
  *    gmetric_send(&g, &msg);
@@ -130,10 +130,24 @@ void gmetric_create(gmetric_t* g);
 
 /** \brief open a UDP socket
  *
- * open up a socket.  Needs to be done before calling gmetric_send
+ * open up a socket.  Needs to be done before calling gmetric_send.
  *
+ * THIS MAY BE THREAD UNSAFE since it calls gethostbyname.
+ *
+ * \param[in] addr the hostname to connect to, e.g. "mygmond.com" or "127.0.0.1"
+ * \param[in] port the port to connect to
+ * \return 1 if ok, 0 if false (boolean)
  */
 int gmetric_open(gmetric_t* g, const char* addr, int port);
+
+
+/** \brief Raw interface to open a gmetric socket that skips gethostbyname_X
+ *
+ * \param[in] ip the ip address IN NETWORK ORDER
+ * \param[in] port
+ * \return 1 if ok, 0 if false (boolean)
+ */
+int gmetric_open_raw(gmetric_t* g, uint32_t ip, int port);
 
 /** \brief send a metric to the socket
  *
