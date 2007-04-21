@@ -135,7 +135,7 @@ void gmetric_create(gmetric_t* g);
  * THIS MAY BE THREAD UNSAFE since it calls gethostbyname.
  *
  * \param[in] addr the hostname to connect to, e.g. "mygmond.com" or "127.0.0.1"
- * \param[in] port the port to connect to
+ * \param[in] port the port to connect to, in HOST order
  * \return 1 if ok, 0 if false (boolean)
  */
 int gmetric_open(gmetric_t* g, const char* addr, int port);
@@ -144,7 +144,7 @@ int gmetric_open(gmetric_t* g, const char* addr, int port);
 /** \brief Raw interface to open a gmetric socket that skips gethostbyname_X
  *
  * \param[in] ip the ip address IN NETWORK ORDER
- * \param[in] port
+ * \param[in] port IN HOST order (e.g. "8649")
  * \return 1 if ok, 0 if false (boolean)
  */
 int gmetric_open_raw(gmetric_t* g, uint32_t ip, int port);
