@@ -108,7 +108,7 @@ struct gmetric_message
     const char* name;
     const char* units;
     const char* typestr;
-    uint32_t slope; // enum 0-4 TBD
+    ganglia_slope_t slope;
     uint32_t tmax;
     uint32_t dmax;
 	union {
