@@ -1,0 +1,5 @@
+This is the standard "./configure && make && make test"
+followed by "make install"
+
+Do "./configure --help" for options
+
