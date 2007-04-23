@@ -1,5 +1,28 @@
-This is the standard "./configure && make && make test"
-followed by "make install"
 
-Do "./configure --help" for options
+INSTAL INSTRUCTIONS
+
+it's pretty easy.
+
+
+1) C-Source
+
+If you don't want to deal with a library, just copy the 4 source files to whatever
+you want.  Relax, it's the MIT license.
+
+2) Standard
+
+it's the usual ./configure && make && make test && make install hoo-haa.
+
+See ./configure --help for details
+
+3) Python
+
+You can just go into the python directory and do the usual
+python setup.py install
+
+it's a whole single file, so it's pretty easy to do what you want with.
+
+OR
+
+#2 will do this all for you.
 
