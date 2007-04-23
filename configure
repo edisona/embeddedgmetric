@@ -18904,7 +18904,8 @@ then
 fi
 CFLAGS="$EXTRACFLAGS $CFLAGS"
 
-          ac_config_files="$ac_config_files Makefile"
+                    ac_config_files="$ac_config_files Makefile python/Makefile"
+
 
 echo "$as_me:$LINENO: checking whether ${MAKE-make} sets \$(MAKE)" >&5
 echo $ECHO_N "checking whether ${MAKE-make} sets \$(MAKE)... $ECHO_C" >&6
@@ -19478,6 +19479,7 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+  "python/Makefile" ) CONFIG_FILES="$CONFIG_FILES python/Makefile" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5

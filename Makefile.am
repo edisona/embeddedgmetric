@@ -1,5 +1,6 @@
 
 
+SUBDIRS = . python
 
 lib_LTLIBRARIES = libembeddedgmetric.la
 libembeddedgmetric_la_SOURCES = src/embeddedgmetric.c src/modp_numtoa.c

@@ -20,6 +20,10 @@ then
 fi
 CFLAGS="$EXTRACFLAGS $CFLAGS"
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([
+	Makefile
+	python/Makefile
+	 ])
+
 AC_PROG_MAKE_SET
 AC_OUTPUT
