@@ -19,7 +19,7 @@ void testCreate()
 	msg.value.v_string = "bar";
     msg.typestr = 0;
     msg.units = "";
-	msg.slope = 0;
+	msg.slope = GANGLIA_SLOPE_ZERO;
 	msg.tmax = 60;
 	msg.dmax = 0;
 
@@ -48,7 +48,7 @@ void testSend()
     /* msg.value.v_double = 1.2345; */
     msg.typestr = 0;
     msg.units = "";
-	msg.slope = 0;
+	msg.slope = GANGLIA_SLOPE_ZERO;
 	msg.tmax = 60;
 	msg.dmax = 0;
 
