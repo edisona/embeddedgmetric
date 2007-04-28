@@ -39,7 +39,7 @@ function makexdr($name, $value, $typename, $units, $slope, $tmax, $dmax)
     return $str;
 }
 
-function gmetric_open($host, $post, $proto)
+function gmetric_open($host, $port, $proto)
 {
     if ($proto == "udp") {
         $fp = fsockopen("udp://$host", $port, $errno, $errstr);
