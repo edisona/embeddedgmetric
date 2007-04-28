@@ -3,6 +3,7 @@
 
 /**
  * This is the MIT LICENSE
+ * http://www.opensource.org/licenses/mit-license.php
  *
  * Copyright (c) 2007 Nick Galbreath
  *
