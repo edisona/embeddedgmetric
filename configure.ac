@@ -1,4 +1,4 @@
-AC_INIT(embeddedgmetric, [v1.0.0], [nickg -at- modp -dot- com])
+AC_INIT(embeddedgmetric, [v1.1.0], [nickg -at- modp -dot- com])
 AC_PREREQ(2.59)
 AC_CONFIG_SRCDIR(src)
 AM_INIT_AUTOMAKE
