@@ -1,12 +1,10 @@
 
+.PHONY: clean distclean
+
 if PYTHON
 all:
 	python setup.py build
-else
-all:
-endif
 
-.PHONY: clean distclean
 
 clean:
 	rm -f *.pyc *~
@@ -20,3 +18,21 @@ install:
 
 uninstall:
 	python setup.py uninstall
+else
+
+# do nothing if python not requested
+
+all:
+
+clean:
+
+distclean:
+
+test:
+
+install:
+
+uninstall:
+
+endif
+

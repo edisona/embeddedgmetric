@@ -300,24 +300,37 @@ uninstall-am: uninstall-info-am
 	uninstall-info-am
 
 
-@PYTHON_TRUE@all:
-@PYTHON_TRUE@	python setup.py build
-@PYTHON_FALSE@all:
-
 .PHONY: clean distclean
 
-clean:
-	rm -f *.pyc *~
-	python setup.py clean
-	rm -rf build
+@PYTHON_TRUE@all:
+@PYTHON_TRUE@	python setup.py build
 
-distclean: clean
+@PYTHON_TRUE@clean:
+@PYTHON_TRUE@	rm -f *.pyc *~
+@PYTHON_TRUE@	python setup.py clean
+@PYTHON_TRUE@	rm -rf build
 
-install:
-	python setup.py install
+@PYTHON_TRUE@distclean: clean
 
-uninstall:
-	python setup.py uninstall
+@PYTHON_TRUE@install:
+@PYTHON_TRUE@	python setup.py install
+
+@PYTHON_TRUE@uninstall:
+@PYTHON_TRUE@	python setup.py uninstall
+
+# do nothing if python not requested
+
+@PYTHON_FALSE@all:
+
+@PYTHON_FALSE@clean:
+
+@PYTHON_FALSE@distclean:
+
+@PYTHON_FALSE@test:
+
+@PYTHON_FALSE@install:
+
+@PYTHON_FALSE@uninstall:
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
