@@ -57,12 +57,18 @@
  *
  */
 
+#ifndef COM_MODP_EMBEDDED_GMETRIC_H
+#define COM_MODP_EMBEDDED_GMETRIC_H
+
 #include <stdint.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 
+#ifndef __cplusplus
+extern "C" {
+#endif
 
 #define GANGLIA_MAX_MESSAGE_LEN 512
 
@@ -93,7 +99,7 @@ typedef struct
 {
     struct sockaddr_in sa;
     int s;
-} gmetric gmetric_t;
+} gmetric_t;
 
 /**
  * message structure
@@ -200,3 +206,9 @@ void gmetric_message_clear(gmetric_message_t* msg);
  * \return 1 if ok, 0 if bad
  */
 int gmetric_message_validate(const gmetric_message_t* msg);
+
+#ifndef __cplusplus
+}
+#endif
+
+#endif
