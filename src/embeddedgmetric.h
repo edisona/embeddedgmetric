@@ -43,9 +43,9 @@
  *    exit(1);
  * }
  * foreach metric {
- *    msg.type = "string";
+ *    msg.type = GANGLIA_VALUE_STRING;
  *    msg.name = "foo";
- *    msg.value = "bar";
+ *    msg.value.v_string = "bar";
  *    msg.unit = "no units";
  *    msg.slope = GANGLIA_SLOPE_BOTH;
  *    msg.tmax = 120;
