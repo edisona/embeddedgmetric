@@ -66,7 +66,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#ifndef __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
