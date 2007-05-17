@@ -43,11 +43,11 @@
  *    exit(1);
  * }
  * foreach metric {
- *    msg.type = GANGLIA_VALUE_STRING;
+ *    msg.type = GMETRIC_VALUE_STRING;
  *    msg.name = "foo";
  *    msg.value.v_string = "bar";
  *    msg.unit = "no units";
- *    msg.slope = GANGLIA_SLOPE_BOTH;
+ *    msg.slope = GMETRIC_SLOPE_BOTH;
  *    msg.tmax = 120;
  *    msg.dmax = 0;
  *    gmetric_send(&g, &msg);
