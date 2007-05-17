@@ -67,7 +67,7 @@
 #define GANGLIA_MAX_MESSAGE_LEN 512
 
 /* copied from ganglia source */
-enum Ganglia_value_types {
+typedef enum {
     GANGLIA_VALUE_UNKNOWN = 0,
     GANGLIA_VALUE_STRING = 1,
     GANGLIA_VALUE_UNSIGNED_SHORT = 2,
@@ -76,34 +76,29 @@ enum Ganglia_value_types {
     GANGLIA_VALUE_INT = 5,
     GANGLIA_VALUE_FLOAT = 6,
     GANGLIA_VALUE_DOUBLE = 7,
-};
+} Ganglia_value_types;
 
-typedef enum Ganglia_value_types Ganglia_value_types;
-
-enum Ganglia_slope_types {
+typedef enum {
     GANGLIA_SLOPE_ZERO = 0,
     GANLIGA_SLOPE_POSITIVE = 1,
     GANGLIA_SLOPE_NEGATIVE = 2,
     GANGLIA_SLOPE_BOTH = 3,
     GANGLIA_SLOPE_UNSPECIFIED =4
-};
-
-typedef enum Ganglia_slope_types ganglia_slope_t;
+} ganglia_slope_t;
 
 /**
  * Control structure and shared buffers
  */
-struct gmetric
+typedef struct
 {
     struct sockaddr_in sa;
     int s;
-};
-typedef struct gmetric gmetric_t;
+} gmetric gmetric_t;
 
 /**
  * message structure
  */
-struct gmetric_message
+typedef struct
 {
 	Ganglia_value_types type;
     const char* name;
@@ -121,8 +116,7 @@ struct gmetric_message
 		float          v_float;
 		double         v_double;
 	} value;
-};
-typedef struct gmetric_message gmetric_message_t;
+} gmetric_message_t;
 
 /** \brief "constructor"
  *
