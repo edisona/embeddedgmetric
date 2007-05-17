@@ -1,2 +1,9 @@
-[use the svn log ]
-	
+
+17-May-2007:
+	* Release 1.1
+	* Minor interface changes -- better names, and will not collide with the official ganglia .h
+	* faster -- use modp_numtoa instead of sprintf, for 20x better performance in string processing
+	* Better makefile
+	* Better .h file
+
+

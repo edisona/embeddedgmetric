@@ -70,27 +70,26 @@
 extern "C" {
 #endif
 
-#define GANGLIA_MAX_MESSAGE_LEN 512
-
-/* copied from ganglia source */
-typedef enum {
-    GANGLIA_VALUE_UNKNOWN = 0,
-    GANGLIA_VALUE_STRING = 1,
-    GANGLIA_VALUE_UNSIGNED_SHORT = 2,
-    GANGLIA_VALUE_SHORT = 3,
-    GANGLIA_VALUE_UNSIGNED_INT = 4,
-    GANGLIA_VALUE_INT = 5,
-    GANGLIA_VALUE_FLOAT = 6,
-    GANGLIA_VALUE_DOUBLE = 7,
-} Ganglia_value_types;
+#define GMETRIC_MAX_MESSAGE_LEN 512
 
 typedef enum {
-    GANGLIA_SLOPE_ZERO = 0,
-    GANLIGA_SLOPE_POSITIVE = 1,
-    GANGLIA_SLOPE_NEGATIVE = 2,
-    GANGLIA_SLOPE_BOTH = 3,
-    GANGLIA_SLOPE_UNSPECIFIED =4
-} ganglia_slope_t;
+    GMETRIC_VALUE_UNKNOWN = 0,
+    GMETRIC_VALUE_STRING = 1,
+    GMETRIC_VALUE_UNSIGNED_SHORT = 2,
+    GMETRIC_VALUE_SHORT = 3,
+    GMETRIC_VALUE_UNSIGNED_INT = 4,
+    GMETRIC_VALUE_INT = 5,
+    GMETRIC_VALUE_FLOAT = 6,
+    GMETRIC_VALUE_DOUBLE = 7,
+} gmetric_value_t;
+
+typedef enum {
+    GMETRIC_SLOPE_ZERO = 0,
+    GMETRIC_SLOPE_POSITIVE = 1,
+    GMETRIC_SLOPE_NEGATIVE = 2,
+    GMETRIC_SLOPE_BOTH = 3,
+    GMETRIC_SLOPE_UNSPECIFIED = 4
+} gmetric_slope_t;
 
 /**
  * Control structure and shared buffers
@@ -106,11 +105,11 @@ typedef struct
  */
 typedef struct
 {
-	Ganglia_value_types type;
+	gmetric_value_t type;
     const char* name;
     const char* units;
     const char* typestr;
-    ganglia_slope_t slope;
+    gmetric_slope_t slope;
     uint32_t tmax;
     uint32_t dmax;
 	union {

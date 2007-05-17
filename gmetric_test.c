@@ -12,14 +12,14 @@ int gErrors = 0;
 
 void testCreate()
 {
-    char buffer[GANGLIA_MAX_MESSAGE_LEN];
+    char buffer[GMETRIC_MAX_MESSAGE_LEN];
     gmetric_message_t msg;
-	msg.type = GANGLIA_VALUE_STRING;
+	msg.type = GMETRIC_VALUE_STRING;
 	msg.name ="foo";
 	msg.value.v_string = "bar";
     msg.typestr = 0;
     msg.units = "";
-	msg.slope = GANGLIA_SLOPE_ZERO;
+	msg.slope = GMETRIC_SLOPE_ZERO;
 	msg.tmax = 60;
 	msg.dmax = 0;
 
@@ -41,14 +41,14 @@ void testCreate()
 void testSend()
 {
     gmetric_message_t msg;
-	msg.type = GANGLIA_VALUE_STRING;
-    /* 	msg.type = GANGLIA_VALUE_DOUBLE; */
+	msg.type = GMETRIC_VALUE_STRING;
+    /* 	msg.type = GMETRIC_VALUE_DOUBLE; */
  	msg.name ="foo";
 	msg.value.v_string = "bar";
     /* msg.value.v_double = 1.2345; */
     msg.typestr = 0;
     msg.units = "";
-	msg.slope = GANGLIA_SLOPE_ZERO;
+	msg.slope = GMETRIC_SLOPE_ZERO;
 	msg.tmax = 60;
 	msg.dmax = 0;
 

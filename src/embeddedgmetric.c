@@ -70,48 +70,48 @@ int gmetric_message_create_xdr(char* buffer, uint len,
     }
 
     switch (msg->type) {
-    case GANGLIA_VALUE_UNSIGNED_SHORT:
+    case GMETRIC_VALUE_UNSIGNED_SHORT:
         modp_uitoa10(msg->value.v_ushort, valbuf);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
         break;
-    case GANGLIA_VALUE_SHORT:
+    case GMETRIC_VALUE_SHORT:
         modp_itoa10(msg->value.v_ushort, valbuf);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
         break;
-    case GANGLIA_VALUE_UNSIGNED_INT:
+    case GMETRIC_VALUE_UNSIGNED_INT:
         modp_uitoa10(msg->value.v_uint, valbuf);
         if (!xdr_string(&x,  &valbufptr, sizeof(valbuf))) {
             return -1;
         }
         break;
-    case GANGLIA_VALUE_INT:
+    case GMETRIC_VALUE_INT:
         modp_itoa10(msg->value.v_int, valbuf);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
         break;
-    case GANGLIA_VALUE_FLOAT:
+    case GMETRIC_VALUE_FLOAT:
         modp_dtoa(msg->value.v_float, valbuf, 6);
         if (!xdr_string(&x,  &valbufptr, sizeof(valbuf))) {
             return -1;
         }
         break;
-    case GANGLIA_VALUE_DOUBLE:
+    case GMETRIC_VALUE_DOUBLE:
         modp_dtoa(msg->value.v_double, valbuf, 6);
         if (!xdr_string(&x, &valbufptr, sizeof(valbuf))) {
             return -1;
         }
         break;
-    case GANGLIA_VALUE_STRING:
+    case GMETRIC_VALUE_STRING:
         if (!xdr_string(&x, (char**) &msg->value.v_string, ~0)) {
             return -1;
         }
         break;
-    case GANGLIA_VALUE_UNKNOWN:
+    case GMETRIC_VALUE_UNKNOWN:
         if (!xdr_string(&x, (char**) &msg->value.v_string, ~0)) {
             return -1;
         }
@@ -223,7 +223,7 @@ int gmetric_send_xdr(gmetric_t* g, const char* buf, int len)
 
 int gmetric_send(gmetric_t* g, const gmetric_message_t* msg)
 {
-    char buf[GANGLIA_MAX_MESSAGE_LEN];
+    char buf[GMETRIC_MAX_MESSAGE_LEN];
     int len = gmetric_message_create_xdr(buf, sizeof(buf), msg);
     return gmetric_send_xdr(g, buf, len);
 }
@@ -241,11 +241,11 @@ void gmetric_close(gmetric_t* g)
 
 void gmetric_message_clear(gmetric_message_t* msg)
 {
-    msg->type = GANGLIA_VALUE_UNKNOWN;
+    msg->type = GMETRIC_VALUE_UNKNOWN;
     msg->name = "";
     msg->units = "";
     msg->typestr = "";
-    msg->slope = GANGLIA_SLOPE_BOTH;
+    msg->slope = GMETRIC_SLOPE_BOTH;
     msg->tmax = 60;
     msg->dmax = 0;
     msg->value.v_double = 0;
