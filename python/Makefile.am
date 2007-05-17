@@ -1,6 +1,10 @@
 
+if PYTHON
 all:
 	python setup.py build
+else
+all:
+endif
 
 .PHONY: clean distclean
 
