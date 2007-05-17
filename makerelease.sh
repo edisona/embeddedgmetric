@@ -1,6 +1,6 @@
 #!/bin/sh
 
-FILE=embeddedgemtric-v1.1.0
+FILE=embeddedgmetric-v1.1.0
 rm -rf ${FILE}
 svn co http://embeddedgmetric.googlecode.com/svn/trunk ${FILE}
 
