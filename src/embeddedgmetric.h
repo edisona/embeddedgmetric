@@ -207,7 +207,7 @@ void gmetric_message_clear(gmetric_message_t* msg);
  */
 int gmetric_message_validate(const gmetric_message_t* msg);
 
-#ifndef __cplusplus
+#ifdef __cplusplus
 }
 #endif
 
