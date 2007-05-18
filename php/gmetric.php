@@ -121,6 +121,10 @@ function gmetric_close($gm)
     }
 }
 
+$gm = gmetric_open('localhost', 8651, 'udp');
+gmetric_send($gm, 'foo', 'bar', 'string', '', 'both', 60, 0);
+gmetric_close($gm);
+
 /*
 $msg = makexdr("foo", "bar", "string", "", "both", 60, 0);
 $foo = "0000000000000006737472696e67000000000003666f6f00000000036261720000000000000000030000003c00000000";
