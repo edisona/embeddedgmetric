@@ -2,7 +2,7 @@
 
 FILE=embeddedgmetric-v1.2.0
 rm -rf ${FILE}
-svn co http://embeddedgmetric.googlecode.com/svn/trunk ${FILE}
+svn export http://embeddedgmetric.googlecode.com/svn/trunk ${FILE}
 
 find $FILE -name '.svn' | xargs rm -rf
 
