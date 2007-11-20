@@ -1,4 +1,8 @@
 
+20-Nov-2007:
+	* Release 1.2
+	* Updated modp_numtoa to get round-to-even bug fixes
+
 17-May-2007:
 	* Release 1.1
 	* Minor interface changes -- better names, and will not collide with the official ganglia .h
