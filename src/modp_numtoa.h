@@ -1,4 +1,4 @@
-/* -*- mode: c; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4 -*- */
+/* -*- mode: c++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4 -*- */
 /* vi: set expandtab shiftwidth=4 tabstop=4: */
 
 /**
@@ -21,8 +21,18 @@
  *
  */
 
-#ifndef MODP_NUMTOA_H
-#define MODP_NUMTOA_H
+#ifndef COM_MODP_STRINGENCODERS_NUMTOA_H
+#define COM_MODP_STRINGENCODERS_NUMTOA_H
+
+#ifdef __cplusplus
+#define BEGIN_C extern "C" {
+#define END_C }
+#else
+#define BEGIN_C
+#define END_C
+#endif
+
+BEGIN_C
 
 #include <stdint.h>
 
@@ -51,5 +61,7 @@ void modp_uitoa10(uint32_t value, char* buf);
  *    Can only be 0-9.
  */
 void modp_dtoa(double value, char* buf, int precision);
+
+END_C
 
 #endif
