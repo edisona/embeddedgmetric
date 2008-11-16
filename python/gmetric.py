@@ -103,11 +103,11 @@ class Gmetric:
 
     def send(self, NAME, VAL, TYPE='', UNITS='', SLOPE='both',
              TMAX=60, DMAX=0):
-        if slopestr not in slope_str2int:
+        if SLOPE not in slope_str2int:
             raise ValueError("Slope must be one of: " + str(self.slope.keys()))
-        if typestr not in self.type:
+        if TYPE not in self.type:
             raise ValueError("Type must be one of: " + str(self.type))
-        if len(name) == 0:
+        if len(NAME) == 0:
             raise ValueError("Name must be non-empty")
 
         msg = gmetric_write(NAME, VAL, TYPE, UNITS, SLOPE, TMAX, DMAX)
