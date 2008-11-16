@@ -1,13 +1,13 @@
 """
-
 Core metrics for Darwin (uhhh Mac OS X).
 
 Tested on Mac OSX 10.5
-
 """
 
 from subprocess import Popen, PIPE
 from time import time
+
+from metric import metric
 
 class metric_proc_total(metric):
 

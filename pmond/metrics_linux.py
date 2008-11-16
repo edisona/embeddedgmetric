@@ -1,5 +1,4 @@
 """
-
 Core metrics for Linux
 
 Tested on  Linux Kernel 2.6.27.7.11, Ubuntu 8.10
@@ -8,8 +7,9 @@ Tested on  Linux Kernel 2.6.27.7.11, Ubuntu 8.10
 from subprocess import Popen, PIPE
 from time import time
 
-class metric_proc_total(metric):
+from metric import metric
 
+class metric_proc_total(metric):
     def interval(self):
         return 80
 
@@ -53,7 +53,6 @@ class metric_swap(metric):
         self.addMetric({'NAME':'swap_free', 'VAL':swap_free,
                         'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
                         'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
-
 
 class metric_cpu(metric):
     def interval(self):
