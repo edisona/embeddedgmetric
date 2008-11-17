@@ -9,7 +9,7 @@ from time import time
 
 from metric import metric
 
-class metric_proc_total(metric):
+class metric_proc(metric):
 
     def interval(self):
         return 80
@@ -29,36 +29,6 @@ class metric_sys_clock(metric):
         self.addMetric({'NAME':'sys_clock', 'VAL':int(time()),
                         'TYPE':'timestamp', 'UNITS':'s', 'TMAX':1200,
                         'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})    
-
-class metric_swap(metric):
-    def interval(self):
-        return 40
-
-    def gather(self, tree):
-        sysctls = ['sysctl', 'vm.swapusage']
-        p = Popen(sysctls, stdout=PIPE)
-        lines = p.stdout.read().split(' ')
-
-        # lines is now the list:
-        # ['vm.swapusage:', 'total', '=', '1024.00M', '',
-        #     'used', '=', '590.66M', '', 'free', '=', '433.34M',
-        #      '', '(encrypted)\n']
-
-        swap_total = float(lines[3].strip('M')) * 1024
-        swap_free = float(lines[11].strip('M')) * 1024
-
-        self.addMetric({'NAME':'swap_total', 'VAL':int(swap_total),
-                        'TYPE':'uint32', 'UNITS':'KB', 'TMAX':1200,
-                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
-
-        self.addMetric({'NAME':'swap_free', 'VAL':int(swap_free),
-                        'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
-                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
-
-        # Bonus - not part of gmond
-        #self.addMetric({'NAME':'swap_used', 'VAL':val,
-        #                'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
-        #                'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
 
 class metric_cpu(metric):
     def interval(self):
@@ -196,6 +166,31 @@ Pageouts:                     278246.
                         'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
                         'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
 
+        sysctls = ['sysctl', 'vm.swapusage']
+
+        p = Popen(sysctls, stdout=PIPE)
+        lines = p.stdout.read().split(' ')
+
+        # lines is now the list:
+        # ['vm.swapusage:', 'total', '=', '1024.00M', '',
+        #     'used', '=', '590.66M', '', 'free', '=', '433.34M',
+        #      '', '(encrypted)\n']
+
+        swap_total = float(lines[3].strip('M')) * 1024
+        swap_free  = float(lines[11].strip('M')) * 1024
+
+        self.addMetric({'NAME':'swap_total', 'VAL':int(swap_total),
+                        'TYPE':'uint32', 'UNITS':'KB', 'TMAX':1200,
+                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
+
+        self.addMetric({'NAME':'swap_free', 'VAL':int(swap_free),
+                        'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
+                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
+
+        # Bonus - not part of gmond
+        #self.addMetric({'NAME':'swap_used', 'VAL':val,
+        #                'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
+        #                'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
         
 class metric_disk(metric):
     def interval(self):

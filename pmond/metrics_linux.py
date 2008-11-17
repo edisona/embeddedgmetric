@@ -9,7 +9,7 @@ from time import time
 
 from metric import metric
 
-class metric_proc_total(metric):
+class metric_proc(metric):
     def interval(self):
         return 80
 
@@ -28,31 +28,6 @@ class metric_sys_clock(metric):
         self.addMetric({'NAME':'sys_clock', 'VAL':int(time()),
                         'TYPE':'timestamp', 'UNITS':'s', 'TMAX':1200,
                         'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})    
-
-class metric_swap(metric):
-    def interval(self):
-        return 40
-
-    def gather(self, tree):
-        f = open('/proc/meminfo', 'rb')
-        lines = f.read().split('\n')
-        f.close()
-
-        swap_total = 0
-        swap_free = 0
-        for line in lines:
-            if line.startswith('SwapTotal:'):
-                swap_total = int(line[10:-3])
-            elif line.startswith('SwapFree:'):
-                swap_free = int(line[10:-3])
-            
-        self.addMetric({'NAME':'swap_total', 'VAL':swap_total,
-                        'TYPE':'uint32', 'UNITS':'KB', 'TMAX':1200,
-                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
-
-        self.addMetric({'NAME':'swap_free', 'VAL':swap_free,
-                        'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
-                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
 
 class metric_cpu(metric):
     def interval(self):
@@ -203,16 +178,39 @@ class metric_mem(metric):
         return 60
 
     def gather(self, tree):
+        """
+        MemTotal:       773560 kB
+MemFree:        316160 kB
+Buffers:        121832 kB
+Cached:         254736 kB
+"""
+
         f = open('/proc/meminfo', 'rb')
         lines = f.read().split('\n')
         f.close()
-        swap_total = -1
-        swap_free = -1
+        swap_total  = -1
+        swap_free   = -1
+        mem_total   = -1
+        mem_cached  = -1
+        mem_buffers = -1
+        mem_free    = -1
+
+        # tbd
+        mem_shared  = -1
+
         for line in lines:
-            if line.startswith('SwapTotal:'):
+            if line.startswith('SwapTotal'):
                 swap_total = int(line.split()[1])
-            elif line.startswith('SwapFree:'):
+            elif line.startswith('SwapFree'):
                 swap_free = int(line.split()[1])
+            elif line.startswith('MemTotal'):
+                mem_total = int(line.split()[1])
+            elif line.startswith('MemFree'):
+                mem_free  = int(line.split()[1])
+            elif line.startswith('Cached'):
+                mem_cached = int(line.split()[1])
+            elif line.startswith("Buffers"):
+                mem_buffers = int(line.split()[1])
 
         if swap_total != -1:
             self.addMetric({'NAME':'swap_total','VAL' : swap_total,
@@ -224,7 +222,31 @@ class metric_mem(metric):
                             'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
                             'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
 
-        
+        if mem_cached != -1:
+            self.addMetric({'NAME':'mem_cached', 'VAL' : mem_cached,
+                            'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
+                            'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
+
+        if mem_total != -1:
+            self.addMetric({'NAME':'mem_total', 'VAL' : mem_total,
+                            'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
+                            'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
+
+        if mem_free != -1:
+            self.addMetric({'NAME':'mem_free', 'VAL' : mem_free,
+                            'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
+                            'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
+
+        if mem_buffers != -1:
+            self.addMetric({'NAME':'mem_buffers', 'VAL' : mem_buffers,
+                            'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
+                            'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
+
+        if mem_shared != -1:
+            self.addMetric({'NAME':'mem_shared', 'VAL' : mem_shared,
+                            'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
+                            'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
+
 class metric_disk(metric):
     def interval(self):
         return 40
@@ -235,8 +257,8 @@ class metric_disk(metric):
 
         fields = lines[1].split()
         disk_total = float(fields[1]) /  1024.0
-        disk_free = float(fields[3]) /  1024.0
-            
+        disk_free  = float(fields[3]) /  1024.0
+
         self.addMetric({'NAME':'disk_total', 'VAL' : disk_total,
                         'TYPE':'double', 'UNITS':'GB', 'TMAX':1200,
                         'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
@@ -244,7 +266,6 @@ class metric_disk(metric):
         self.addMetric({'NAME':'disk_free', 'VAL' : disk_free,
                         'TYPE':'double', 'UNITS':'GB', 'TMAX':1200,
                         'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
-
 
 class metric_iostat(metric):
     last_time = -1

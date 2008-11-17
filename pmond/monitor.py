@@ -95,8 +95,13 @@ class Monitor(threading.Thread):
         # MACHINE    
         s = sched.scheduler(time, sleep)
         
-        for m in [metric_cpu(), metric_iostat(), metric_swap(), metric_disk(),
-                  metric_proc_total(), metric_sys_clock(), metric_net()]:
+        for m in [metric_cpu(),
+                  metric_iostat(),
+                  metric_mem(),
+                  metric_disk(),
+                  metric_proc(),
+                  metric_sys_clock(),
+                  metric_net() ]:
             m.register(s, self.tree)
         
         s.run()
