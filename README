@@ -1,2 +1,6 @@
 README:
 see INSTALL or http://code.google.com/p/embeddedgmetric/
+
+For version 1.3, this makes gmond/gmetric packets that has been tested with the 2.X series of ganglia.
+
+Have not tested with ganglia 3.X
