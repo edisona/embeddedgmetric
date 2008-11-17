@@ -7,5 +7,6 @@ setup(name='pmond',
       description='gmond compatible metrics collector/emitter',
       author='Nick Galbreath',
       author_email='nickg@modp.com',
-      url='http://code.google.com/p/embeddedgmetric/'
+      url='http://code.google.com/p/embeddedgmetric/',
+      packages = ['pmond']
      )
