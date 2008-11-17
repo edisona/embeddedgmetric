@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 import metric
 from os import uname
 ostype = uname()[0]
@@ -10,6 +11,8 @@ elif ostype == 'Darwin':
 else:
     print "whoops"
     sys.exit(1)
+
+keep_processing = True
 
 
 from subprocess import Popen, PIPE
@@ -84,7 +87,6 @@ class monitortree(object):
 #  * monitor
 #
 #
-
 import threading
 class Monitor(threading.Thread):
     def __init__(self, tree):
@@ -92,9 +94,9 @@ class Monitor(threading.Thread):
         self.tree = tree
         
     def run(self):
-        # MACHINE    
+        # MACHINE 
         s = sched.scheduler(time, sleep)
-        
+
         for m in [metric_cpu(),
                   metric_iostat(),
                   metric_mem(),
@@ -115,16 +117,23 @@ class Reader(threading.Thread):
         self.tree = tree
 
     def run(self):
+        tree = self.tree
+
         serversocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         serversocket.bind(('', 4001))
         #serversocket.listen(5)
-
-        tree = self.tree
-        while 1:
-            #accept connections from outside
-            data, address = serversocket.recvfrom(512)
-            tree.addMetric(gmetric_read(data))
-
+        serversocket.setblocking(1)
+        serversocket.settimeout(None)
+        while keep_processing:
+            try:
+                print "loop"
+                data, address = serversocket.recvfrom(512)
+                tree.addMetric(gmetric_read(data))
+            except KeyboardInterrupt:
+                print "got intertupe"
+            except socket.timeout:
+                print "udp timeout"
+                
 class Writer(threading.Thread):
     """
     Writes out metrics tree as XML
@@ -135,23 +144,45 @@ class Writer(threading.Thread):
 
     def run(self):
         serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        serversocket.settimeout(None)
         serversocket.bind(('', 4000))
         serversocket.listen(5)
-        while 1:
-            clientsocket, address = serversocket.accept()
-            clientsocket.send(self.tree.xml())
-            clientsocket.close()
+        while keep_processing:
+            try:
+                clientsocket, address = serversocket.accept()
+                clientsocket.send(self.tree.xml())
+                clientsocket.close()
+            except KeyboardInterrupt:
+                print "got intertupe"
 
-if __name__ == '__main__':
-    
+            except socket.timeout:
+                print "got timeout"
+
+           
+def main():
+
     tree =  monitortree()
-    
-    w = Writer(tree)
-    w.start()
 
     r = Reader(tree)
-    r.start()
-
+    w = Writer(tree)
     m = Monitor(tree)
+    r.start()
+    w.start()
     m.start()
 
+
+    m.join()
+
+    while m.isAlive():
+        try:
+            m.join(1000)
+        except KeyboardInterrupt:
+            print "Exit on main"
+            sys.exit(1)
+
+
+if __name__ == '__main__':
+    from daemon import *
+    drop_privileges()
+    daemonize()
+    main()
