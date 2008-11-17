@@ -141,16 +141,14 @@ class metric_cpu(metric):
                         'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
          
 class metric_net(metric):
-    last_time = time()
-    last_bytes_out = -1
-    last_bytes_in = -1
+    last_time = -1
 
     def interval(self):
         return 40
 
     def gather(self, tree):
         now = time()
-        interval = self.last_time - now
+        interval = now - self.last_time
 
         f = open('/proc/net/dev', 'rb')
         lines = f.read().split('\n')
@@ -181,7 +179,8 @@ class metric_net(metric):
 
         # BUT, oddly  "official" gmond returns bytes per second 
         # which seems odd.  So sadly, we have do all this nonsense
-        if self.last_bytes_out == -1:
+        if self.last_time == -1:
+            self.last_time        = now
             self.last_bytes_out   = bytes_out
             self.last_bytes_in    = bytes_in
             self.last_packets_out = packets_out
@@ -193,7 +192,7 @@ class metric_net(metric):
         packets_out_bps = float(packets_out - self.last_packets_out) / interval
         packets_in_bps  = float(packets_in  - self.last_packets_in)  / interval
 
-        self.last_time = time()
+        self.last_time = now
         self.last_bytes_out   = bytes_out
         self.last_bytes_in    = bytes_in
         self.last_packets_out = packets_out
