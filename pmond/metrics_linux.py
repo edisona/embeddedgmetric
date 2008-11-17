@@ -14,12 +14,30 @@ class metric_proc(metric):
         return 80
 
     def gather(self, tree):
+        # slow'n'dumb way of doing this
+        # an alternate would be to list /proc
+        # and count number of "files' that are "numbers"
         p = Popen(['ps', 'ax'],  stdout=PIPE)    
         lines = p.stdout.read().split('\n')
         self.addMetric({'NAME':'proc_total', 'VAL':len(lines) -1,
                         'TYPE':'uint32', 'UNITS':'', 'TMAX':950,
                         'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})    
         
+        # now get running processes
+        f = open('/proc/stat', 'rb')
+        line = f.read().split('\n')
+        f.close()
+
+        proc_run = -1
+        for line in lines:
+            if line.startswith('procs_running'):
+                proc_run = int(line.split()[1])
+                break
+        if proc_run != -1:
+            self.addMetric({'NAME':'proc_run', 'VAL':proc_run
+                            'TYPE':'uint32', 'UNITS':'', 'TMAX':950,
+                            'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
+
 class metric_sys_clock(metric):
     def interval(self):
         return 1200
@@ -178,12 +196,6 @@ class metric_mem(metric):
         return 60
 
     def gather(self, tree):
-        """
-        MemTotal:       773560 kB
-MemFree:        316160 kB
-Buffers:        121832 kB
-Cached:         254736 kB
-"""
 
         f = open('/proc/meminfo', 'rb')
         lines = f.read().split('\n')
@@ -252,6 +264,10 @@ class metric_disk(metric):
         return 40
 
     def gather(self, tree):
+        """
+        Only reads FIRST disk right now...
+        """
+
         p = Popen(['df', '-m', '/'], stdout=PIPE)
         lines = p.stdout.read().split('\n')
 
