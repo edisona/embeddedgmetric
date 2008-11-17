@@ -1,7 +1,8 @@
 
 17-Nov-2008:
 	* Release 1.3
-	* embeddedgemtric.c  Fix horrible cut-n-paste issue that opened an extra socket
+	* embeddedgemtric.c  Fix Issue 5: horrible cut-n-paste issue that opened an extra socket
+	                     THANKS to "benoit.louy" 
 	* python/gmetric.py  Added ability to decode XDR packets, more tests
 	
 20-Nov-2007:
