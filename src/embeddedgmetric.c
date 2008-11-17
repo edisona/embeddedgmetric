@@ -162,17 +162,6 @@ int gmetric_open_raw(gmetric_t* g, uint32_t ip, int port)
 
     memset(&g->sa, 0, sizeof(struct sockaddr_in));
     g->sa.sin_family = AF_INET;
-    if (g->s == -1) {
-        gmetric_close(g);
-    }
-    g->s = -1;
-    g->s = socket(AF_INET, SOCK_DGRAM,  IPPROTO_UDP);
-    if (g->s == -1) {
-        return 0;
-    }
-
-    memset(&g->sa, 0, sizeof(struct sockaddr_in));
-    g->sa.sin_family = AF_INET;
     g->sa.sin_port = htons(port);
     memcpy(&(g->sa.sin_addr), &ip, sizeof(ip));
     return 1;
