@@ -160,11 +160,11 @@ class metric_net(metric):
                         'TYPE':'float', 'UNITS':'bytes/sec',
                         'TMAX':300, 'DMAX': 0, 'SLOPE':'both',
                         'SOURCE':'gmond'})
-        self.addMetric({'NAME':'packets_in', 'VAL':packets_in_bps,
+        self.addMetric({'NAME':'pkts_in', 'VAL':packets_in_bps,
                         'TYPE':'float', 'UNITS':'bytes/sec',
                         'TMAX':300, 'DMAX': 0, 'SLOPE':'both',
                         'SOURCE':'gmond'})
-        self.addMetric({'NAME':'packets_out', 'VAL':packets_out_bps,
+        self.addMetric({'NAME':'pkts_out', 'VAL':packets_out_bps,
                         'TYPE':'float', 'UNITS':'bytes/sec',
                         'TMAX':300, 'DMAX': 0, 'SLOPE':'both',
                         'SOURCE':'gmond'})
