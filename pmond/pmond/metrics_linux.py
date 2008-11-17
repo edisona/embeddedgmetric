@@ -117,7 +117,10 @@ class metric_cpu(metric):
                 if k.startswith('processor'):
                     cpu_num += 1
                 elif k.startswith('cpu MHz'):
-                    cpu_speed = int(float(v.strip()))
+                    # for whatever reason CPUs frequently aren't
+                    # nice whole numbers.
+                    # use round so you don't have a CPU of 2599
+                    cpu_speed = int(round(float(v.strip())))
 
         if cpu_num > 0:
             self.addMetric({'NAME':'cpu_num', 'VAL': cpu_num,
