@@ -14,7 +14,7 @@ class metric_proc_total(metric):
         return 80
 
     def gather(self, tree):
-        p = Popen(['ps', '-ax'],  stdout=PIPE)    
+        p = Popen(['ps', 'ax'],  stdout=PIPE)    
         lines = p.stdout.read().split('\n')
         self.addMetric({'NAME':'proc_total', 'VAL':len(lines) -1,
                         'TYPE':'uint32', 'UNITS':'', 'TMAX':950,
@@ -60,8 +60,8 @@ class metric_cpu(metric):
 
     def gather(self, tree):
         sysctls = [ 'sysctl',
-                    'kern.ostype',
-                    'kern.osrelease',
+                    'kernel.ostype',
+                    'kernel.osrelease',
                     ]
         p = Popen(sysctls, stdout=PIPE)
         lines = p.stdout.read().split('\n')
@@ -91,29 +91,32 @@ class metric_cpu(metric):
         cpu_num = 0
         cpu_speed = 0
         for line in lines:
-            k,v = line.split(':',2)
-            k = k.strip()
-            if k.startswith('processor'):
-                cpu_num += 1
-            elif k.startswith('cpu MHz'):
-                cpu_speed = int(v.strip())
+            pos = line.find(':')
+            if pos != -1:
+                k = line[0:pos].strip()
+                v = line[pos+1:]
+                if k.startswith('processor'):
+                    cpu_num += 1
+                elif k.startswith('cpu MHz'):
+                    cpu_speed = int(float(v.strip()))
 
-         self.addMetric({'NAME':'cpu_num', 'VAL': cpu_num
-                         'TYPE':'uint32', 'UNITS':'', 'TMAX':1200,
-                         'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})        
-         self.addMetric({'NAME':'cpu_speed', 'VAL': cpu_speed,
-                         'TYPE':'uint32', 'UNITS':'MHz', 'TMAX':1200,
-                         'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
-
-         # machine type.  gmond hardwires stuff at compile time with
-         # a few types.  This is more dynamic
-
-         p = Popen(['uname', '-m'], stdout=PIPE)
-         line = p.stdout.read()
-         machine_type = line.strip()
-         self.addMetric({'NAME':'machine_type', 'VAL':machine_time,
-                         'TYPE':'string', 'UNITS':'', 'TMAX':1200,
-                         'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
+        if cpu_num > 0:
+            self.addMetric({'NAME':'cpu_num', 'VAL': cpu_num,
+                            'TYPE':'uint32', 'UNITS':'', 'TMAX':1200,
+                            'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})        
+        if cpu_speed > 0:
+            self.addMetric({'NAME':'cpu_speed', 'VAL': cpu_speed,
+                            'TYPE':'uint32', 'UNITS':'MHz', 'TMAX':1200,
+                            'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
+            
+        # machine type.  gmond hardwires stuff at compile time with
+        # a few types.  This is more dynamic
+        p = Popen(['uname', '-m'], stdout=PIPE)
+        line = p.stdout.read()
+        machine_type = line.strip()
+        self.addMetric({'NAME':'machine_type', 'VAL':machine_type,
+                        'TYPE':'string', 'UNITS':'', 'TMAX':1200,
+                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
          
 class metric_net(metric):
     last_time = time()
@@ -134,19 +137,21 @@ class metric_net(metric):
         bytes_out = 0
         packets_out = 0
         bytes_in = 0
-        bytes_out = 0
+        packets_in = 0
 
         for line in lines[2:]:
+            if not len(line):
+                continue
             interface = line[0:7]
-            if interace == 'lo':
+            if interface == 'lo':
                 # skip loopback interface?
                 continue
 
-            fields = filter(lambda x: len(x), line[7:].split(' '))
+            fields = line[7:].split()
             bytes_out   += int(fields[0])
             packets_out += int(fields[1])
             bytes_in    += int(fields[8])
-            packets_n   += int(fields[9])
+            packets_in  += int(fields[9])
         
         # Ideally you'd just return total_out and total_in
         # and let RRD figure out bytes/sec using a COUNTER
@@ -215,7 +220,7 @@ class metric_mem(metric):
                             'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
 
         if swap_free != -1:
-            self.addMetric({'NAME':'swap_free', 'VAL' : swap_free
+            self.addMetric({'NAME':'swap_free', 'VAL' : swap_free,
                             'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
                             'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
 
@@ -228,17 +233,15 @@ class metric_disk(metric):
         p = Popen(['df', '-m', '/'], stdout=PIPE)
         lines = p.stdout.read().split('\n')
 
-        fields = lines.split()
-        disk_total = float(values[1]) /  1048576.0
-        disk_free = float(values[3]) /  1048576.0
+        fields = lines[1].split()
+        disk_total = float(fields[1]) /  1024.0
+        disk_free = float(fields[3]) /  1024.0
             
-        self.addMetric({'NAME':'disk_total', 
-                        'VAL' : disk_total,
+        self.addMetric({'NAME':'disk_total', 'VAL' : disk_total,
                         'TYPE':'double', 'UNITS':'GB', 'TMAX':1200,
                         'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
 
-        self.addMetric({'NAME':'disk_free', 
-                        'VAL' : disk_free,
+        self.addMetric({'NAME':'disk_free', 'VAL' : disk_free,
                         'TYPE':'double', 'UNITS':'GB', 'TMAX':1200,
                         'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
 
@@ -252,13 +255,13 @@ class metric_iostat(metric):
 
     def gather(self, tree):
         f = open('/proc/stat', 'rb')
-        line = f.stdout.readline()
-        c.close()
+        line = f.readline()
+        f.close()
 
         fields = line.split()
         cpus = [int(fields[1]), int(fields[2]), int(fields[3]),int(fields[4])]
 
-        if self.last_time = -1:
+        if self.last_time == -1:
             self.last_time = time()
             self.cpus = cpus
             return
@@ -266,8 +269,7 @@ class metric_iostat(metric):
         # convert to zip
         cpu_diff = [float(cpus[i] - self.cpus[i]) for i in range(4)]
         cpu_sum = float(sum(cpu_diff))
-        cpu_percent = [ 100.0 * cpus[i]/ cpu_sum for in range(4) ]
-
+        cpu_percent = [ 100.0* cpu_diff[i]/ cpu_sum for i in range(4) ]
         self.addMetric({'NAME':'cpu_user', 'VAL': cpu_percent[0],
                         'TYPE':'float', 'UNITS':'%', 'TMAX':90,
                         'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})

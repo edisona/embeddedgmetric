@@ -4,7 +4,7 @@ import metric
 from os import uname
 ostype = uname()[0]
 if ostype == 'Linux':
-    exec('import metrics_linux')
+    from metrics_linux import *
 elif ostype == 'Darwin':
     from metrics_darwin import *
 else:
