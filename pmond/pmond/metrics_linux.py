@@ -1,3 +1,4 @@
+#
 # This is the MIT License
 # http://www.opensource.org/licenses/mit-license.php
 #
@@ -59,7 +60,7 @@ class metric_proc(metric):
                 proc_run = int(line.split()[1])
                 break
         if proc_run != -1:
-            self.addMetric({'NAME':'proc_run', 'VAL':proc_run
+            self.addMetric({'NAME':'proc_run', 'VAL':proc_run,
                             'TYPE':'uint32', 'UNITS':'', 'TMAX':950,
                             'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
 
