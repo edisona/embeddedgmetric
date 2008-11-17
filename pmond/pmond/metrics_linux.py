@@ -168,10 +168,10 @@ class metric_net(metric):
                 continue
 
             fields = line[7:].split()
-            bytes_out   += int(fields[0])
-            packets_out += int(fields[1])
-            bytes_in    += int(fields[8])
-            packets_in  += int(fields[9])
+            bytes_in     += int(fields[0])
+            packets_in   += int(fields[1])
+            bytes_out    += int(fields[8])
+            packets_out  += int(fields[9])
         
         # Ideally you'd just return total_out and total_in
         # and let RRD figure out bytes/sec using a COUNTER
