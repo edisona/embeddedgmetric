@@ -73,7 +73,6 @@ def drop_privileges(uid_name='nobody', gid_name='nogroup'):
 
     if os.getuid() != 0:
         # We're not root so, like, whatever dude
-        sys.stderr.write("drop_privileges: already running as '%s'\n" % starting_uid_name)
         return
 
     if starting_uid == 0:
