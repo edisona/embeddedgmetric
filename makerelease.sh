@@ -6,8 +6,8 @@ svn export http://embeddedgmetric.googlecode.com/svn/trunk ${FILE}
 
 find $FILE -name '.svn' | xargs rm -rf
 
-# don't package pmond for now
-rm -rf pmond
+# don't package pmond
+rm -rf ${FILE}/pmond
 
 rm -f ${FILE}/makerelease.sh
 rm -f ${FILE}.tar.gz
