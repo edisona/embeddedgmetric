@@ -40,6 +40,7 @@ import java.net.InetAddress;
  *
  */
 class gmetric {
+
     public final static int SLOPE_ZERO         = 0;
     public final static int SLOPE_POSITIVE     = 1;
     public final static int SLOPE_NEGATIVE     = 2;
@@ -53,45 +54,6 @@ class gmetric {
     public final static String VALUE_INT             = "int32";
     public final static String VALUE_FLOAT           = "float";
     public final static String VALUE_DOUBLE          = "double";
-
-    public static byte[] write(String name, String value, String type,
-			       String units, int slope, int tmax, int dmax)
-    {
-	try {
-	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    DataOutputStream dos = new DataOutputStream(baos);
-	    dos.writeInt(0);
-	    writeXDRString(dos, type);
-	    writeXDRString(dos, name);
-	    writeXDRString(dos, value);
-	    writeXDRString(dos, units);
-	    dos.writeInt(slope);
-	    dos.writeInt(tmax);
-	    dos.writeInt(dmax);
-	    return baos.toByteArray();
-	} catch (IOException e) {
-	    // really this is impossible
-	    return null;
-	}
-    }
-
-    public static void writeXDRString(DataOutputStream dos, String s) throws IOException
-    {
-	dos.writeInt(s.length());
-	dos.writeBytes(s);
-	int offset = s.length() % 4;
-	if (offset != 0) {
-	    for (int i = offset; i < 4; ++i) {
-		dos.writeByte(0);
-	    }
-	}
-	/*
-	bytes[] b = s.getBytes("utf8");
-	int len = b.length();
-	dos.writeInt(len);
-	dos.write(b, 0, len);
-	*/
-    }
 
     public static void send(InetAddress address, int port,
 			    String name, String value, String type,
@@ -138,16 +100,61 @@ class gmetric {
     }
 
 
+
+    /*
+     * EVERYTHING BELOW HERE YOU DON"T NEED TO USE
+     */
+
+    public static byte[] write(String name, String value, String type,
+			       String units, int slope, int tmax, int dmax)
+    {
+	try {
+	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    DataOutputStream dos = new DataOutputStream(baos);
+	    dos.writeInt(0);
+	    writeXDRString(dos, type);
+	    writeXDRString(dos, name);
+	    writeXDRString(dos, value);
+	    writeXDRString(dos, units);
+	    dos.writeInt(slope);
+	    dos.writeInt(tmax);
+	    dos.writeInt(dmax);
+	    return baos.toByteArray();
+	} catch (IOException e) {
+	    // really this is impossible
+	    return null;
+	}
+    }
+
+    private static void writeXDRString(DataOutputStream dos, String s) throws IOException
+    {
+	dos.writeInt(s.length());
+	dos.writeBytes(s);
+	int offset = s.length() % 4;
+	if (offset != 0) {
+	    for (int i = offset; i < 4; ++i) {
+		dos.writeByte(0);
+	    }
+	}
+	/*
+	bytes[] b = s.getBytes("utf8");
+	int len = b.length();
+	dos.writeInt(len);
+	dos.write(b, 0, len);
+	*/
+    }
+
     /*
      * Everything below here is just for testing
      */
-    static final byte[] HEXCHARS = {
+    private static final byte[] HEXCHARS = {
 	(byte)'0', (byte)'1', (byte)'2', (byte)'3',
 	(byte)'4', (byte)'5', (byte)'6', (byte)'7',
 	(byte)'8', (byte)'9', (byte)'a', (byte)'b',
 	(byte)'c', (byte)'d', (byte)'e', (byte)'f'
     };
-    public static String bytes2hex(byte[] raw)
+
+    private static String bytes2hex(byte[] raw)
     {
 	try {
 	    int pos = 0;
