@@ -8,10 +8,21 @@ import time
 import rrdtool
 
 class gparse:
+
     def __init__(self):
+        """
+        self.hosts is mapping of hosts to a mapping of metrics
+
+        host01 --> {cpu_load: 20, disk_space: 30 >>
+        host02 -->  ...
+        """
+
         self.hosts = {}
 
     def parse_string(self, s):
+        """
+        Parses an ganglia XML string and fills out the host dictionary
+        """
         hosts = self.hosts
         root = etree.XML(s)
         for host in root.iter('HOST'):
@@ -23,7 +34,9 @@ class gparse:
         return True
 
     def parse_url(self, s):
-        #
+        """
+        This connects to a gmond server and parses the XML
+        """
         try:
             f = urllib2.urlopen(s)
             data = f.read()
@@ -35,13 +48,18 @@ class gparse:
         #print self.hosts['nickg-macbook.local']['cpu_speed']['VAL']
 
     def parse_file(self, s):
+        """
+        Parses a static file that is XML from gmond... mostly for testing
+        """
         f = open(s)
         data = f.read()
         f.close()
         return parse_string(data)
 
     def make_graph_load(self, dir, host, duration, width):
-        """ Specialized fform for Load Graphs"""
+        """
+        Specialized fform for Load Graphs
+        """
         # this oculd be imporved by just reusing the 1-m load
         # instead of using 1,5,15 metrics, but whatever
 
@@ -50,7 +68,7 @@ class gparse:
 
         imgfile = os.path.join(path, f)
         # if less than X seconds old, just return imgfile
-        
+
         load1_rrdfile = os.path.join(path, "load_one.rrd")
         load5_rrdfile = os.path.join(path, "load_five.rrd")
         load15_rrdfile = os.path.join(path, "load_fifteen.rrd")
@@ -73,8 +91,10 @@ class gparse:
         return imgfile
 
     def make_graph_cpu(self, dir, host, duration, width):
-        """ Specialized form for CPU graphs """
-        
+        """
+        Specialized form for CPU graphs
+        """
+
         f = host + '-cpu-' + duration + '-' + str(width) + '.png' 
         path = os.path.join(dir, host)
 
@@ -102,8 +122,10 @@ class gparse:
         return imgfile
 
     def make_graph_network(self, dir, host, duration, width):
-        """ Specialized form for CPU graphs """
-        
+        """
+        Specialized form for CPU graphs
+        """
+
         f = host + '-network-' + duration + '-' + str(width) + '.png' 
         path = os.path.join(dir, host)
         imgfile = os.path.join(path, f)
@@ -126,12 +148,14 @@ class gparse:
         return imgfile
 
     def make_graph_memory(self, dir, host, duration, width):
-        """ Specialized form for CPU graphs """
+        """
+        Specialized form for CPU graphs
+        """
 
         f = host + '-memory-' + duration + '-' + str(width) + '.png' 
         path = os.path.join(dir, host)
         imgfile = os.path.join(path, f)
-        
+
         path = os.path.join(dir, host)
         mem_rrdfile = os.path.join(path, "mem_used_percent.rrd")
         swap_rrdfile = os.path.join(path, "swap_used_percent.rrd")
@@ -157,7 +181,7 @@ class gparse:
 
     def make_graph(self, dir, host, metric, duration, width='400'):
         #--end now --start end-120000s --width 400
-        
+
         if metric == 'cpu':
             return self.make_graph_cpu(dir,host,duration,width)
         if metric == 'network':
@@ -185,6 +209,9 @@ class gparse:
         return imgfile
 
     def make_rrds(self, dir):
+        """
+        walks the host mappings and makes specialized graphs for various metrics
+        """
         for host, metrics in self.hosts.iteritems():
             path = os.path.join(dir, host)
             if not os.path.isdir(path):
@@ -197,7 +224,7 @@ class gparse:
             did_mem = False
             did_swap = False
             crawlers = {}
-            
+
             for mname, attrs in metrics.iteritems():
                 if mname.startswith('mem_') or mname.startswith('swap_') or mname.startswith('pkts_') or mname.startswith('disk_'):
                     continue
@@ -207,9 +234,6 @@ class gparse:
                     cid,cname = mname.split('_')
                     crawlers[cid] = cname
 
-            name = 'num_crawlers'
-            rrdfile = os.path.join(path, name + '.rrd')
-            self.rrd_update(rrdfile, name, len(crawlers), 'both')
 
             # ignore these, and just use how much is used
             mem_total = float(metrics['mem_total']['VAL'])
