@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 
+# SYSTEM
 import urllib2
 import os.path
 import os
 import time
 import sys
-    
+import logging    
+
+# 3RD PARTY
 import rrdtool
 from lxml import etree
 
+# LOCAL
 import gparse
 
 def rrd_update(rrdfile, name, value, slope):
@@ -28,7 +32,7 @@ def rrd_update(rrdfile, name, value, slope):
         
     token = 'DS:' + name + ':' + dstype + ':20:U:U'
     if not os.path.exists(rrdfile):
-        sys.stderr.write("Creating %s\n", rrdfile)
+        logging.info("Creating %s\n", rrdfile)
         # 1440 is minutes per day
         # 300 minutes = 5 hours
         # 30 hours = 1800 minutes
@@ -39,7 +43,9 @@ def rrd_update(rrdfile, name, value, slope):
                        'RRA:AVERAGE:0.5:3:1800'
                        )
         # no else
-    rrdtool.update(rrdfile, 'N:' + str(value))
+    svalue = str(value)
+    logging.debug("Updating '%s' with value of '%s'", rrdfile, svalue)
+    rrdtool.update(rrdfile, 'N:' + svalue)
 
 def make_standard_rrds(hosts, dir):
     """
@@ -105,21 +111,76 @@ if __name__ == '__main__':
                       help="port", default=8649);
     parser.add_option("-d", "--dir", dest="dir", default='/tmp',
                       help="directory to write RRD files")
+    parser.add_option("-s", "--sleep", dest="sleep", default=20,
+                      help="seconds to sleep between intervals")
+    parser.add_option("-l", "--log", dest="log", default='warning',
+                      help="log level: [ debug | info | warn | error ]")
     options, args = parser.parse_args()
 
     host = options.host
     port = int(options.port)
     dir = options.dir
+    sleep = int(options.sleep)
+    log = options.log.lower()
+    if log == 'debug':
+        loglevel = logging.DEBUG
+    elif log == 'info':
+        loglevel = logging.INFO
+    elif log == 'warn' or log == 'warning':
+        loglevel = logging.WARNING
+    elif log == 'err' or log == 'error':
+        loglevel = logging.ERROR
+
+    logging.basicConfig(level=loglevel)
     
-    sys.stderr.write("Using %s:%d and directory %s\n" % (host,port,dir))
-    
+    logging.info("Using %s:%d and directory %s" % (host,port,dir))
+
+    # now do checks
+
+    # is dir a directory
+    if not os.path.isdir(dir):
+        logging.error("Directory '%s' does not exist. Exiting", dir)
+        sys.exit(1)
+
+    # can we write to it?
+    # this is the LAME way of doing this
+    try:
+        tmpfile = os.path.join(dir, 'tmp')
+        f = open(tmpfile, 'w')
+        f.close()
+        os.remove(tmpfile)
+    except:
+        logging.error("Directory '%s' is not writable. Exiting", dir)
+        sys.exit(1)
+        
+    try:
+        xml = gparse.read(host, port)
+    except Exception,e:
+        logging.error("Read of %s:%d failed -- is gmond running?  Exiting",
+                      host, port)
+        sys.exit(1)
+
     while True:
         try:
-            xml = gparse.read(host, port);
+            logging.debug("Reading from %s:%d", host, port)
+            t0 = time.time()
+            xml = gparse.read(host, port)
+            secs = time.time() - t0;
+            logging.debug("Reading took %fs", secs)
+            logging.debug("Parsing XML")
+            t0 = time.time()
             hosts = gparse.parse(xml)
+            secs = time.time() - t0;
+            logging.debug("Parsing took %fs", secs)
+
+            logging.debug("Inserting...")
+            t0 = time.time()
             make_standard_rrds(hosts, dir)
-        except:
-            pass
-        
-        time.sleep(20)
+            secs = time.time() - t0;
+            logging.debug("Inserts took %fs", secs)
+        except Exception,e:
+            logging.error("Exception!: %s", str(e))
+
+        logging.debug("Sleeping for %ds....\n", sleep)
+        time.sleep(sleep)
 
