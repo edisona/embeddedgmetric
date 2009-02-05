@@ -30,7 +30,7 @@ def rrd_update(rrdfile, name, value, slope):
     elif slope == 'positive':
         dstype = 'COUNTER'
         
-    token = 'DS:' + name + ':' + dstype + ':20:U:U'
+    token = 'DS:' + name + ':' + dstype + ':60:U:U'
     if not os.path.exists(rrdfile):
         logging.info("Creating %s\n", rrdfile)
         # 1440 is minutes per day

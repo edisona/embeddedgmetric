@@ -12,10 +12,12 @@ def make_graph_load(dir, imgdir, host, duration, width='400'):
     """
     Specialized fform for Load Graphs
     """
+
+    print "HOST = " + host
     # this oculd be imporved by just reusing the 1-m load
     # instead of using 1,5,15 metrics, but whatever
     
-    f = host + '-load-' + duration + '-' + str(width) + '.png' 
+    f = host + '-load-' + str(duration) + '-' + str(width) + '.png' 
     imgfile = os.path.join(imgdir, f)
 
     # if less than X seconds old, just return imgfile
@@ -26,8 +28,8 @@ def make_graph_load(dir, imgdir, host, duration, width='400'):
     
     rrdtool.graph(imgfile,
                   '--end', 'now',
-                  '--start', 'end-' + duration,
-                  '--width', width,
+                  '--start', 'end-' + str(duration),
+                  '--width', str(width),
                   '--imgformat', 'PNG',
                   '--lower-limit', '0',
                   '--title', 'Load',
@@ -56,7 +58,7 @@ def make_graph_cpu(dir, imgdir, host, duration, width='400'):
     rrdtool.graph(imgfile,
                   '--end', 'now',
                   '--start', 'end-' + duration,
-                  '--width', width,
+                  '--width', str(width),
                   '--imgformat', 'PNG',
                   '--lower-limit', '0',
                   '--upper-limit', '100',
@@ -64,7 +66,7 @@ def make_graph_cpu(dir, imgdir, host, duration, width='400'):
                   'DEF:sys=' + sys_rrdfile + ':cpu_system:AVERAGE',
                   'DEF:user=' + user_rrdfile + ':cpu_user:AVERAGE',
                   'DEF:nice=' + nice_rrdfile + ':cpu_nice:AVERAGE',
-                  'LINE1:sys#0000FF:"cpu system"',
+                  'AREA:sys#0000FF:"cpu system"',
                   'AREA:user#00FF00:"cpu user":STACK',
                   'AREA:nice#FF0000:"cpu nice":STACK'
                   )
@@ -80,11 +82,12 @@ def make_graph_network(dir, imgdir, host, duration, width='400'):
     
     bytesin_rrdfile = os.path.join(dir, host, "bytes_in.rrd")
     bytesout_rrdfile = os.path.join(dir, host,  "bytes_out.rrd")
+    print bytesin_rrdfile
     
     rrdtool.graph(imgfile,
                   '--end', 'now',
                   '--start', 'end-' + duration,
-                  '--width', width,
+                  '--width', str(width),
                   '--imgformat', 'PNG',
                   '--lower-limit', '0',
                   '--title', 'Network Bytes',
@@ -110,7 +113,7 @@ def make_graph_memory(dir, imgdir, host, duration, width='400'):
     rrdtool.graph(imgfile,
                   '--end', 'now',
                   '--start', 'end-' + duration,
-                  '--width', '400',
+                  '--width', str(width),
                   '--imgformat', 'PNG',
                   '--lower-limit', '0',
                   '--upper-limit', '100',
@@ -121,7 +124,7 @@ def make_graph_memory(dir, imgdir, host, duration, width='400'):
                   'DEF:disk=' + disk_rrdfile + ':disk_used_percent:AVERAGE',
                   'LINE1:bi#0000FF:memory used',
                   'LINE1:bo#FF0000:swap used',
-                  'LINE1:disk#FF0000:disk used'
+                  'LINE1:disk#00FF00:disk used'
                   )
     return imgfile
 
@@ -129,15 +132,15 @@ def make_graph(dir, imgdir, host, metric, duration, width='400'):
     #--end now --start end-120000s --width 400
     
     if metric == 'cpu':
-        return make_graph_cpu(dir,host,duration,width)
+        return make_graph_cpu(dir,imgdir,host,duration,width)
     if metric == 'network':
-        return make_graph_network(dir,host,duration,width)
+        return make_graph_network(dir,imgdir,host,duration,width)
     if metric == 'memory':
-        return make_graph_memory(dir,host,duration,width)
+        return make_graph_memory(dir,imgdir,host,duration,width)
     if metric == 'load':
-        return make_graph_load(dir,host,duration,width)
+        return make_graph_load(dir,imgdir,host,duration,width)
     
-    f = host + '-' + metric + '-' + duration + '-' + str(width) + '.png'
+    f = str(host) + '-' + metric + '-' + str(duration) + '-' + str(width) + '.png'
     
     imgfile = os.path.join(imgdir, f)
     rrdfile = os.path.join(dir,  host, metric + ".rrd")
