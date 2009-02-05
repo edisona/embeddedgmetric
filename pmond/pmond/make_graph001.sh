@@ -38,6 +38,7 @@ WGET=wget
 # required by 'binutils' -- part of the gnu 'texinfo' package
 MAKEINFO=makeinfo
 
+export PATH=${PREFIX}/bin:${PATH}
 export LDFLAGS="-L${PREFIX}/lib"
 export CPPFLAGS=-I${PREFIX}/include
 export CONFIG_SHELL=/bin/bash
