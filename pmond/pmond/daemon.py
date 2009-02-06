@@ -79,10 +79,10 @@ def drop_privileges(uid_name='nobody', gid_name='nogroup'):
 
         # Get the uid/gid from the name
         running_uid = pwd.getpwnam(uid_name)[2]
-        running_gid = grp.getgrnam(gid_name)[2]
+        #running_gid = grp.getgrnam(gid_name)[2]
 
         # Try setting the new uid/gid
-        os.setgid(running_gid)
+        #os.setgid(running_gid)
         os.setuid(running_uid)
 
         new_umask = 077
