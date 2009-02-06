@@ -43,7 +43,7 @@ class metric_proc(metric):
         lines = p.stdout.read().split('\n')
         self.addMetric({'NAME':'proc_total', 'VAL':len(lines) -1,
                         'TYPE':'uint32', 'UNITS':'', 'TMAX':950,
-                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})    
+                        'DMAX':0, 'SLOPE':'zero'})    
         
 class metric_sys_clock(metric):
     def interval(self):
@@ -52,7 +52,7 @@ class metric_sys_clock(metric):
     def gather(self, tree):
         self.addMetric({'NAME':'sys_clock', 'VAL':int(time()),
                         'TYPE':'timestamp', 'UNITS':'s', 'TMAX':1200,
-                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})    
+                        'DMAX':0, 'SLOPE':'zero'})    
 
 class metric_cpu(metric):
     def interval(self):
@@ -74,27 +74,27 @@ class metric_cpu(metric):
         val = lines[0].split(' ')[1]
         self.addMetric({'NAME':'cpu_num', 'VAL':val,
                         'TYPE':'uint16', 'UNITS':'', 'TMAX':1200,
-                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
+                        'DMAX':0, 'SLOPE':'zero'})
 
         val = lines[1].split(' ')[1]
         self.addMetric({'NAME':'cpu_speed', 'VAL': int(val) / 1000000,
                         'TYPE':'uint32', 'UNITS':'MHz', 'TMAX':1200,
-                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
+                        'DMAX':0, 'SLOPE':'zero'})
 
         val = lines[2].split(' ')[1]
         self.addMetric({'NAME':'mem_total', 'VAL': int(val) / 1024,
                         'TYPE':'uint32', 'UNITS':'KB', 'TMAX':1200,
-                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
+                        'DMAX':0, 'SLOPE':'zero'})
         
         val = lines[3].split(' ')[4].strip(',')
         self.addMetric({'NAME':'boottime', 'VAL': int(val),
                         'TYPE':'uint32', 'UNITS':'KB', 'TMAX':1200,
-                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
+                        'DMAX':0, 'SLOPE':'zero'})
 
         val = lines[4].split(' ')[1]
         self.addMetric({'NAME':'os_name', 'VAL':val,
                         'TYPE':'string', 'UNITS':'', 'TMAX':1200,
-                        'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
+                        'DMAX':0, 'SLOPE':'zero'})
 
         val = lines[5].split(' ')[1]
         self.addMetric({'NAME':'os_release', 'VAL':val,
@@ -184,12 +184,11 @@ Pageouts:                     278246.
     def gather(self, tree):
         p = Popen(['vm_stat'], stdout=PIPE)
         lines = p.stdout.read().split('\n')
-        mem_free = int(line[1].strip(',').split(':')[1].strip()) * 4
+        mem_free = int(lines[1].strip(',').split(':')[1].strip('.').strip()) * 4
         self.addMetric({'NAME':'mem_free', 
                         'VAL' : mem_free,
                         'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
                         'DMAX':0, 'SLOPE':'both', 'SOURCE':'gmond'})
-
         sysctls = ['sysctl', 'vm.swapusage']
 
         p = Popen(sysctls, stdout=PIPE)
@@ -215,7 +214,8 @@ Pageouts:                     278246.
         #self.addMetric({'NAME':'swap_used', 'VAL':val,
         #                'TYPE':'uint32', 'UNITS':'KB', 'TMAX':180,
         #                'DMAX':0, 'SLOPE':'zero', 'SOURCE':'gmond'})
-        
+
+
 class metric_disk(metric):
     def interval(self):
         return 40
