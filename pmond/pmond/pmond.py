@@ -23,8 +23,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-
+from gmetric import Gmetric
 import metric
+import logging
 from os import uname
 ostype = uname()[0]
 if ostype == 'Linux':
@@ -37,6 +38,31 @@ else:
 
 keep_processing = True
 
+class consumer(object):
+    """
+    collection of "metric collectors"
+    """
+    def __init__(self):
+        self.ary = []
+    def addMetric(self, values, host=None):
+        for a in self.ary:
+            a.addMetric(values, host)
+    def addConsumer(self, o):
+        self.ary.append(o)
+
+class emitter(object):
+    """
+    A consumer of metrics that sends via gmetric
+    """
+    def __init__(self, host, port, protocol):
+        self.g = Gmetric(host, port, protocol)
+
+    def addMetric(self, values, host=None):
+        logging.debug("sending %s = %s", values['NAME'], values['VAL'])
+        logging.debug("DICT = %s", str(values))
+        self.g.send(values['NAME'], values['VAL'],  values['TYPE'],
+                    values['UNITS'], values['SLOPE'], values['TMAX'],
+                    values['DMAX'])
 
 from subprocess import Popen, PIPE
 import sched
@@ -48,7 +74,11 @@ from collections import defaultdict
 from gmetric import gmetric_read
 from socket import gethostname
 
+
 class monitortree(object):
+    """
+    A consumer of metrics that stores things in a xml tree
+    """
     def __init__(self):
         self.hosts = defaultdict(dict)
         self.hostname = gethostname()
@@ -115,7 +145,7 @@ class Monitor(threading.Thread):
     def __init__(self, tree):
         threading.Thread.__init__(self)
         self.tree = tree
-        
+
     def run(self):
         # MACHINE 
         s = sched.scheduler(time, sleep)
@@ -128,7 +158,7 @@ class Monitor(threading.Thread):
                   metric_sys_clock(),
                   metric_net() ]:
             m.register(s, self.tree)
-        
+
         s.run()
 
 class Reader(threading.Thread):
@@ -181,14 +211,19 @@ class Writer(threading.Thread):
             except socket.timeout:
                 print "got timeout"
 
-           
 def main():
 
     tree =  monitortree()
 
     r = Reader(tree)
     w = Writer(tree)
-    m = Monitor(tree)
+
+    c = consumer()
+    e = emitter('172.16.70.128', 8649, 'udp')
+    c.addConsumer(e)
+    c.addConsumer(tree)
+
+    m = Monitor(c)
     r.start()
     w.start()
     m.start()
@@ -205,7 +240,8 @@ def main():
 
 
 if __name__ == '__main__':
-    from daemon import *
-    drop_privileges()
-    daemonize()
+    logging.basicConfig(level=logging.DEBUG)
+    #from daemon import *
+    #drop_privileges()
+    #daemonize()
     main()
