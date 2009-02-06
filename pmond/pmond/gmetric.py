@@ -49,19 +49,40 @@ slope_int2str = {0: 'zero',
                  3: 'both',
                  4: 'unspecified'}
 
-def gmetric_write(NAME, VAL, TYPE, UNITS, SLOPE, TMAX, DMAX):
+def gmetric_value(NAME, VAL):
+    packer = Packer()
+    packer.pack_int(128+5)  # string
+    packer.pack_string('nickg-macbook.local')
+    packer.pack_string(NAME)
+    packer.pack_bool(False)
+    packer.pack_string('%s')
+    packer.pack_string(VAL)
+    return packer.get_buffer()
+
+def gmetric_meta(NAME, TYPE, UNITS, SLOPE, TMAX, DMAX, EXTRAS=None):
     """
     Arguments are in all upper-case to match XML
     """
     packer = Packer()
-    packer.pack_int(0)   # type gmetric
+    packer.pack_int(128)  # "gmetadata_full"
+    packer.pack_string('nickg-macbook.local')
+    packer.pack_string(NAME)
+    packer.pack_bool(False)
+
     packer.pack_string(TYPE)
     packer.pack_string(NAME)
-    packer.pack_string(str(VAL))
     packer.pack_string(UNITS)
     packer.pack_int(slope_str2int[SLOPE]) # map slope string to int
     packer.pack_uint(int(TMAX))
     packer.pack_uint(int(DMAX))
+    if EXTRAS is None:
+        packer.pack_uint(0)
+    else:
+        packer.pack_uint(len(EXTRAS))
+        for k,v in EXTRAS.iteritems():
+            packer.pack_string(k)
+            packer.pack_string(v)
+
     return packer.get_buffer()
 
 def gmetric_read(msg):
@@ -78,6 +99,21 @@ def gmetric_read(msg):
     unpacker.done()
     return values
 
+# I'm sure there is a built-in somehwere
+#  but this seems to work for parsing a command line arg
+def str2bool(s):
+    if s == True or s == '1' or s == 1:
+        return True
+    if s == False or s == '0' or s == 0:
+        return False
+    try:
+        s = s.lower()
+        if s == 'true' or s == 'on' or s == 'yes' or s == 'y' or s == 't':
+            return true
+    except:
+        pass
+
+    return false
 
 class Gmetric:
     """
@@ -102,17 +138,24 @@ class Gmetric:
         #self.socket.connect(self.hostport)
 
     def send(self, NAME, VAL, TYPE='', UNITS='', SLOPE='both',
-             TMAX=60, DMAX=0):
+             TMAX=60, DMAX=0, sendmeta=True, sendvalue=True):
         if SLOPE not in slope_str2int:
-            raise ValueError("Slope must be one of: " + str(self.slope.keys()))
+            raise ValueError("Got '%s' for slope, but must be one of: %s" % (SLOPE, str(slope_str2int.keys())))
         if TYPE not in self.type:
             raise ValueError("Type must be one of: " + str(self.type))
         if len(NAME) == 0:
             raise ValueError("Name must be non-empty")
 
-        msg = gmetric_write(NAME, VAL, TYPE, UNITS, SLOPE, TMAX, DMAX)
-        return self.socket.sendto(msg, self.hostport)
+        ok = True
+        if sendmeta:
+            msg = gmetric_meta(NAME, TYPE, UNITS, SLOPE, TMAX, DMAX)
+            ok &= self.socket.sendto(msg, self.hostport)
+        if sendvalue:
+            msg = gmetric_value(NAME, VAL)
+            ok &= self.socket.sendto(msg, self.hostport)
 
+        # if both ok, then true, else false
+        return ok
 
 if __name__ == '__main__':
     import optparse
@@ -132,13 +175,22 @@ if __name__ == '__main__':
     parser.add_option("", "--slope", dest="slope", default="both",
                       help="The sign of the derivative of the value over time, one of zero, positive, negative, both, default both")
     parser.add_option("", "--type",  dest="type",  default="",
-                      help="The value data type, one of string, int8, uint8, int16, uint16, int32, uint32, float, double")
+                      help="The value data type, one of string, int8, uint8, int16, uint16, int32, uint32, float, double, timestamp")
     parser.add_option("", "--tmax",  dest="tmax",  default="60",
                       help="The maximum time in seconds between gmetric calls, default 60")
     parser.add_option("", "--dmax",  dest="dmax",  default="0",
                       help="The lifetime in seconds of this metric, default=0, meaning unlimited")
+    parser.add_option("", "--sendmeta",  dest="sendmeta",  default=True,
+                      help="Send metadata message, true/false")
+    parser.add_option("", "--sendvalue",  dest="sendvalue",  default=True,
+                      help="Send value message true/false")
+
     (options,args) = parser.parse_args()
+
 
     g = Gmetric(options.host, options.port, options.protocol)
     g.send(options.name, options.value, options.type, options.units,
-           options.slope, options.tmax, options.dmax)
+           options.slope, options.tmax, options.dmax,
+
+           # has to be a better way!
+           str2bool(options.sendmeta), str2bool(options.sendvalue))
