@@ -142,7 +142,7 @@ class metric_net(metric):
         # which seems odd.  So sadly, we have do all this nonsense
         if self.last_out == -1:
             self.last_out  = total_out
-            self.last_n  = total_out
+            self.last_in  = total_in
             return
         
         out_bps = float(total_out - self.last_out) / interval

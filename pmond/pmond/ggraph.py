@@ -36,9 +36,10 @@ def make_graph_load(dir, imgdir, host, duration, width='400'):
                   'DEF:l1=' + load1_rrdfile + ':load_one:AVERAGE',
                   'DEF:l5=' + load5_rrdfile + ':load_five:AVERAGE',
                   'DEF:l15=' + load15_rrdfile + ':load_fifteen:AVERAGE',
-                  'LINE1:l1#0000FF:"load 1"',
-                  'LINE1:l5#00FF00:"load 5"',
-                  'LINE1:l15#FF0000:"load 15"'
+                  'AREA:l1#0000FF:load 1',
+                  'LINE3:l1#000000',
+                  'LINE3:l5#00FF00:load 5',
+                  'LINE3:l15#FF0000:load 15'
                   )
     
     return imgfile

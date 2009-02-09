@@ -199,17 +199,21 @@ export PKG_CONFIG=${PREFIX}/bin/pkg-config
 
 installgnu http://www.python.org/ftp/python/2.6.1/Python-2.6.1.tar.bz2 '--disable-toolbox-glue'
 installgnu ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng-1.2.34.tar.bz2
+
 installgnu http://savannah.inetbridge.net/freetype/freetype-2.3.8.tar.bz2
-installgnu http://fontconfig.org/release/fontconfig-2.6.0.tar.gz
-installgnu http://www.cairographics.org/releases/pixman-0.13.2.tar.gz
-installgnu http://ftp.gnome.org/pub/gnome/sources/glib/2.18/glib-2.18.4.tar.bz2
-
-installgnu http://cairographics.org/releases/cairo-1.8.6.tar.gz
-
-installgnu http://ftp.gnome.org/pub/GNOME/sources/pango/1.23/pango-1.23.0.tar.bz2
 
 installgnu ftp://xmlsoft.org/libxml2/libxml2-2.7.3.tar.gz
 installgnu ftp://xmlsoft.org/libxml2/libxslt-1.1.24.tar.gz
+
+installgnu http://fontconfig.org/release/fontconfig-2.6.0.tar.gz '--enable-libxml2 --disable-docs'
+
+installgnu http://www.cairographics.org/releases/pixman-0.13.2.tar.gz
+installgnu http://ftp.gnome.org/pub/gnome/sources/glib/2.18/glib-2.18.4.tar.bz2
+
+#installgnu http://cairographics.org/releases/cairo-1.8.6.tar.gz
+
+
+installgnu http://ftp.gnome.org/pub/GNOME/sources/pango/1.23/pango-1.23.0.tar.bz2
 
 installgnu ftp://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.7-p72.tar.gz
 
