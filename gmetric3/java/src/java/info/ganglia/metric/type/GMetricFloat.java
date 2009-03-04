@@ -58,7 +58,7 @@ public class GMetricFloat extends GMetric implements Metricable, Incrementable {
 	}
 
 	/* (non-Javadoc)
-	 * @see fim.targeting.ganglia.metric.Incrementable#incrementValue()
+	 * @see info.ganglia.metric.Incrementable#incrementValue()
 	 */
 	public synchronized void incrementValue() {
 		valueFloat++;
@@ -81,14 +81,14 @@ public class GMetricFloat extends GMetric implements Metricable, Incrementable {
 	}
 
 	/* (non-Javadoc)
-	 * @see fim.targeting.ganglia.metric.Metricable#clearValue()
+	 * @see info.ganglia.metric.Metricable#clearValue()
 	 */
 	public synchronized void clearValue() {
 		valueFloat = 0;
 	}
 
 	/* (non-Javadoc)
-	 * @see fim.targeting.ganglia.metric.Metricable#getValueData()
+	 * @see info.ganglia.metric.Metricable#getValueData()
 	 */
 	public byte[] getValueData() {
 		byte[] valueBytes = null;

@@ -66,14 +66,14 @@ public class GMetricString extends GMetric implements Metricable {
 	}
 
 	/* (non-Javadoc)
-	 * @see fim.targeting.ganglia.metric.Metricable#clearValue()
+	 * @see info.ganglia.metric.Metricable#clearValue()
 	 */
 	public void clearValue() {
 		valueString = "";
 	}
 
 	/* (non-Javadoc)
-	 * @see fim.targeting.ganglia.metric.Metricable#getValueData()
+	 * @see info.ganglia.metric.Metricable#getValueData()
 	 */
 	public byte[] getValueData() {
 		byte[] valueBytes = null;

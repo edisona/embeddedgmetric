@@ -36,6 +36,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @author Chris Bowling
  */
+/**
+ * @author cbowling
+ *
+ */
 public class GMetricInteger extends GMetric implements Metricable, Incrementable {
 	private AtomicInteger valueInt = new AtomicInteger(0);
 
@@ -58,7 +62,7 @@ public class GMetricInteger extends GMetric implements Metricable, Incrementable
 	}
 
 	/* (non-Javadoc)
-	 * @see fim.targeting.ganglia.metric.Incrementable#incrementValue()
+	 * @see info.ganglia.metric.Incrementable#incrementValue()
 	 */
 	public void incrementValue() {
 		valueInt.getAndIncrement();
@@ -81,14 +85,14 @@ public class GMetricInteger extends GMetric implements Metricable, Incrementable
 	}
 
 	/* (non-Javadoc)
-	 * @see fim.targeting.ganglia.metric.Metricable#clearValue()
+	 * @see info.ganglia.metric.Metricable#clearValue()
 	 */
 	public void clearValue() {
 		valueInt.set(0);
 	}
 
 	/* (non-Javadoc)
-	 * @see fim.targeting.ganglia.metric.Metricable#getValueData()
+	 * @see info.ganglia.metric.Metricable#getValueData()
 	 */
 	public byte[] getValueData() {
 		byte[] valueBytes = null;
