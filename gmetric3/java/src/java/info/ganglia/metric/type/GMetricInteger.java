@@ -36,10 +36,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @author Chris Bowling
  */
-/**
- * @author cbowling
- *
- */
 public class GMetricInteger extends GMetric implements Metricable, Incrementable {
 	private AtomicInteger valueInt = new AtomicInteger(0);
 
@@ -55,10 +51,12 @@ public class GMetricInteger extends GMetric implements Metricable, Incrementable
 	 *            The units used to measure the metric. Shows on graph
 	 * @param slope
 	 *            See GMetric constants.
+	 * @param additive
+	 *            If false the GMetric values are reset to 0 after update.  If true the GMetric values are additive.
 	 * @throws IOException
 	 */
-	public GMetricInteger(String host, String name, String type, String units, int slope) {
-		super(host, name, type, units, slope);
+	public GMetricInteger(String host, String name, String type, String units, int slope, boolean additive) {
+		super(host, name, type, units, slope, additive);
 	}
 
 	/* (non-Javadoc)

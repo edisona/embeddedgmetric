@@ -50,10 +50,12 @@ import java.util.concurrent.TimeUnit;
 public class GMonitor {
 
 	private static final long delay = 10; // default delay for 10 sec
+	private static final long initPeriod = 10; // default delay for 10 sec
 	private long period = 60; // default period between requests 60 sec
 
 	private List<Metricable> gmetrics;
 	private GConnector connection;
+	private int updateCount = 0;
 
 	/**
 	 * Constructor uses the default monitoring period to set update period and will use the multicastAddress specified in the System environment variable "ganglia.host" for its connection to Ganglia.	 
@@ -113,18 +115,20 @@ public class GMonitor {
 	 *            The units used to measure the metric. Shows on graph
 	 * @param slope
 	 *            See GMetric constants.
+	 * @param additive
+	 *            If false the GMetric values are reset to 0 after update.  If true the GMetric values are additive.
 	 * @return 
 	 */
-	public Metricable createGMetric(String host, String name, String type, String units, int slope) {
+	public Metricable createGMetric(String host, String name, String type, String units, int slope, boolean clearValues) {
 		Metricable gmetric = null;
 		if (GMetric.VALUE_TYPE_INT.equals(type)) {
-			gmetric = new GMetricInteger(host, name, type, units, slope);
+			gmetric = new GMetricInteger(host, name, type, units, slope, clearValues);
 		} else if (GMetric.VALUE_TYPE_STRING.equals(type)) {
-			gmetric = new GMetricString(host, name, type, units, slope);
+			gmetric = new GMetricString(host, name, type, units, slope, clearValues);
 		} else if (GMetric.VALUE_TYPE_FLOAT.equals(type)) {
-			gmetric = new GMetricFloat(host, name, type, units, slope);
+			gmetric = new GMetricFloat(host, name, type, units, slope, clearValues);
 		} else if (GMetric.VALUE_TYPE_DOUBLE.equals(type)) {
-			gmetric = new GMetricDouble(host, name, type, units, slope);
+			gmetric = new GMetricDouble(host, name, type, units, slope, clearValues);
 		} else {
 			throw new IllegalArgumentException("unknown metric type");
 		}
@@ -164,9 +168,16 @@ public class GMonitor {
 		ScheduledExecutorService eScheduledService = Executors.newSingleThreadScheduledExecutor();
 		eScheduledService.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
+				updateCount++;
 				for (Metricable gmetric : gmetrics) {
+					if (updateCount > initPeriod) {
+						sendGMetricInit(gmetric);
+						updateCount = 0;
+					}
 					sendGMetricUpdate(gmetric);
-					gmetric.clearValue();
+					if (!gmetric.isAdditive()) {
+						gmetric.clearValue();
+					}
 				}
 			}
 		}, delay, period, TimeUnit.SECONDS);
@@ -190,15 +201,18 @@ public class GMonitor {
 			return;
 		}
 		GMonitor gmon = new GMonitor(multicastAddress, 30l);
-		GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
-		GMetricDouble testMetric2 = (GMetricDouble) gmon.createGMetric(host, "Ganglia Test2", GMetric.VALUE_TYPE_DOUBLE, "count", GMetric.SLOPE_UNSPECIFIED);
+		GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Int Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, false);
+		GMetricDouble testMetric2 = (GMetricDouble) gmon.createGMetric(host, "Ganglia Double Test", GMetric.VALUE_TYPE_DOUBLE, "count", GMetric.SLOPE_UNSPECIFIED, false);
 
 		Random generator = new Random();
 		int count = 0;
 		double countDouble = 0;
+		System.out.println("Start test");
 		while(true) {
 			count = generator.nextInt(100);
 			countDouble = generator.nextDouble() * 100;
+			System.out.println(count);
+			System.out.println(countDouble);
 			Thread.sleep(5000);
 			testMetric.incrementValue(count);
 			testMetric2.incrementValue(countDouble);

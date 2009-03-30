@@ -35,7 +35,7 @@ public class GMetricTest {
 	public void testMetricTypeConstructor() {
 		try {
 			GMonitor gmon = new GMonitor(MULTICAST_ADDRESS, 30l);
-			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -46,7 +46,7 @@ public class GMetricTest {
 	public void testMetricTypeConstructor2() {
 		try {
 			GMonitor gmon = new GMonitor(MULTICAST_ADDRESS, 30l);
-			GMetricString testMetric = (GMetricString) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_STRING, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricString testMetric = (GMetricString) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_STRING, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -57,7 +57,7 @@ public class GMetricTest {
 	public void testMetricTypeConstructor3() {
 		try {
 			GMonitor gmon = new GMonitor(MULTICAST_ADDRESS, 30l);
-			GMetricFloat testMetric = (GMetricFloat) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_FLOAT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricFloat testMetric = (GMetricFloat) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_FLOAT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -68,7 +68,7 @@ public class GMetricTest {
 	public void testMetricTypeConstructor4() {
 		try {
 			GMonitor gmon = new GMonitor(MULTICAST_ADDRESS, 30l);
-			GMetricDouble testMetric = (GMetricDouble) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_DOUBLE, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricDouble testMetric = (GMetricDouble) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_DOUBLE, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -80,7 +80,7 @@ public class GMetricTest {
 	public void testMetricTypeConstructor5() {
 		try {
 			GMonitor gmon = new GMonitor(MULTICAST_ADDRESS, 30l);
-			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", "INVALID_TYPE", "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", "INVALID_TYPE", "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
 		} catch (Exception e) {
@@ -93,7 +93,7 @@ public class GMetricTest {
 		int value = 10;
 		try {
 			GMonitor gmon = new GMonitor(MULTICAST_ADDRESS, 30l);
-			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 			testMetric.incrementValue(value);
 			testMetric.incrementValue();
 			testMetric.setValue(value);
@@ -108,7 +108,7 @@ public class GMetricTest {
 		double value = 10.50;
 		try {
 			GMonitor gmon = new GMonitor(MULTICAST_ADDRESS, 30l);
-			GMetricDouble testMetric = (GMetricDouble) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_DOUBLE, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricDouble testMetric = (GMetricDouble) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_DOUBLE, "count", GMetric.SLOPE_UNSPECIFIED, true);
 			testMetric.incrementValue(value);
 			testMetric.incrementValue();
 			testMetric.setValue(value);
@@ -123,7 +123,7 @@ public class GMetricTest {
 		float value = 10.50f;
 		try {
 			GMonitor gmon = new GMonitor(MULTICAST_ADDRESS, 30l);
-			GMetricFloat testMetric = (GMetricFloat) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_FLOAT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricFloat testMetric = (GMetricFloat) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_FLOAT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 			testMetric.incrementValue(value);
 			testMetric.incrementValue();
 			testMetric.setValue(value);
@@ -138,7 +138,7 @@ public class GMetricTest {
 		String value = "10";
 		try {
 			GMonitor gmon = new GMonitor(MULTICAST_ADDRESS, 30l);
-			GMetricString testMetric = (GMetricString) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_STRING, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricString testMetric = (GMetricString) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_STRING, "count", GMetric.SLOPE_UNSPECIFIED, true);
 			testMetric.setValue(value);
 			testMetric.setValue(null);
 		} catch (IOException e) {
@@ -151,7 +151,7 @@ public class GMetricTest {
 	@Test
 	public void testWriteXDRString() {
 		try {
-			GMetric gmetric = new GMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetric gmetric = new GMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 			Class[] inputType = new Class[2];
 			Object[] input = new Object[2];
 			inputType[0] = DataOutputStream.class;

@@ -44,4 +44,8 @@ public interface Metricable {
 	 * Clears GMetric value
 	 */
 	public void clearValue();
+	/**
+	 * @return the additive
+	 */
+	public boolean isAdditive();
 }

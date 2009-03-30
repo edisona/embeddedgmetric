@@ -51,10 +51,12 @@ public class GMetricDouble extends GMetric implements Metricable, Incrementable 
 	 *            The units used to measure the metric. Shows on graph
 	 * @param slope
 	 *            See GMetric constants.
+	 * @param additive
+	 *            If false the GMetric values are reset to 0 after update.  If true the GMetric values are additive.
 	 * @throws IOException
 	 */
-	public GMetricDouble(String host, String name, String type, String units, int slope) {
-		super(host, name, type, units, slope);
+	public GMetricDouble(String host, String name, String type, String units, int slope, boolean additive) {
+		super(host, name, type, units, slope, additive);
 	}
 
 	/* (non-Javadoc)

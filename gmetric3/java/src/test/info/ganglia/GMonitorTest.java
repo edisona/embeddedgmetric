@@ -31,7 +31,7 @@ public class GMonitorTest {
 	public void testConstructor() {
 		try {
 			GMonitor gmon = new GMonitor();
-			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -43,7 +43,7 @@ public class GMonitorTest {
 	public void testConstructor2() {
 		try {
 			GMonitor gmon = new GMonitor(30l);
-			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -55,7 +55,7 @@ public class GMonitorTest {
 	public void testConstructor3() {
 		try {
 			GMonitor gmon = new GMonitor(MULTICAST_ADDRESS);
-			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -67,7 +67,7 @@ public class GMonitorTest {
 	public void testConstructor4() {
 		try {
 			GMonitor gmon = new GMonitor(MULTICAST_ADDRESS, 30l);
-			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -78,25 +78,25 @@ public class GMonitorTest {
 	@SuppressWarnings("unused")
 	public void testConstructorNullArgsConst1() {
 		try {
-			GMetric gmetric = new GMetric(null, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetric gmetric = new GMetric(null, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
 		}
 		
 		try {
-			GMetric gmetric = new GMetric(host, null, GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetric gmetric = new GMetric(host, null, GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
 		}
 		
 		try {
-			GMetric gmetric = new GMetric(host, "Ganglia Test", null, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetric gmetric = new GMetric(host, "Ganglia Test", null, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
 		}
 		
 		try {
-			GMetric gmetric = new GMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, null, GMetric.SLOPE_UNSPECIFIED);
+			GMetric gmetric = new GMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, null, GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
 		}
@@ -106,14 +106,14 @@ public class GMonitorTest {
 	@SuppressWarnings("unused")
 	public void testConstructorNullArgsConst2() {
 		try {
-			GMetric gmetric = new GMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetric gmetric = new GMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
 		}catch (Exception e) {
 			fail();
 		}
 		try {
-			GMetric gmetric = new GMetric(null, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetric gmetric = new GMetric(null, "Ganglia Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
 		}catch (Exception e) {
@@ -121,7 +121,7 @@ public class GMonitorTest {
 		}
 
 		try {
-			GMetric gmetric = new GMetric(host, null, GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetric gmetric = new GMetric(host, null, GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
 		}catch (Exception e) {
@@ -129,7 +129,7 @@ public class GMonitorTest {
 		}
 		
 		try {
-			GMetric gmetric = new GMetric(host, "Ganglia Test", null, "count", GMetric.SLOPE_UNSPECIFIED);
+			GMetric gmetric = new GMetric(host, "Ganglia Test", null, "count", GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
 		}catch (Exception e) {
@@ -137,7 +137,7 @@ public class GMonitorTest {
 		}
 		
 		try {
-			GMetric gmetric = new GMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, null, GMetric.SLOPE_UNSPECIFIED);
+			GMetric gmetric = new GMetric(host, "Ganglia Test", GMetric.VALUE_TYPE_INT, null, GMetric.SLOPE_UNSPECIFIED, true);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
 		}catch (Exception e) {

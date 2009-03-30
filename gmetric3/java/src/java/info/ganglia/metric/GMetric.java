@@ -52,6 +52,8 @@ public class GMetric {
 	private final String units;
 	private final int slope;
 	private final byte[] metadata;
+	
+	private boolean additive = false;
 
 	/**
 	 * Constructor creates GMetric with specified arguments
@@ -65,9 +67,11 @@ public class GMetric {
 	 *            The units used to measure the metric. Shows on graph
 	 * @param slope
 	 *            See GMetric constants.
+	 * @param additive
+	 *            If false the GMetric values are reset to 0 after update.  If true the GMetric values are additive.        
 	 * @throws IOException
 	 */
-	public GMetric(String host, String name, String type, String units, int slope) {
+	public GMetric(String host, String name, String type, String units, int slope, boolean additive) {
 		if (null == host) {
 			throw new IllegalArgumentException("host was null");
 		}
@@ -81,11 +85,12 @@ public class GMetric {
 			throw new IllegalArgumentException("units was null");
 		}
 		this.host = host;
-		this.name = name;
+		this.name = name.replaceAll(" ", "");
 		this.type = type;
 		this.units = units;
 		this.slope = slope;
 		this.metadata = writeMeta();
+		this.additive = additive;
 	}
 
 	/**
@@ -182,5 +187,13 @@ public class GMetric {
 	public byte[] getMetaData() {
 		byte[] metaData = this.metadata;
 		return metaData;
+	}
+
+	/**
+	 * Returns false if this GMetric resets values to 0 after it sends an update or true if it's additive
+	 * @return the clearValues
+	 */
+	public boolean isAdditive() {
+		return additive;
 	}
 }
