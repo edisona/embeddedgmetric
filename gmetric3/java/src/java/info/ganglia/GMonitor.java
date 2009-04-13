@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
 public class GMonitor {
 
 	private static final long delay = 10; // default delay for 10 sec
-	private static final long initPeriod = 10; // default delay for 10 sec
+	private static final long initPeriod = 5; // default period 5 requests -- Note graph may drop off if init not sent for extended period of time
 	private long period = 60; // default period between requests 60 sec
 
 	private List<Metricable> gmetrics;
@@ -172,12 +172,15 @@ public class GMonitor {
 				for (Metricable gmetric : gmetrics) {
 					if (updateCount > initPeriod) {
 						sendGMetricInit(gmetric);
-						updateCount = 0;
 					}
 					sendGMetricUpdate(gmetric);
+
 					if (!gmetric.isAdditive()) {
 						gmetric.clearValue();
 					}
+				}
+				if (updateCount > initPeriod) {
+					updateCount = 0;
 				}
 			}
 		}, delay, period, TimeUnit.SECONDS);
@@ -202,18 +205,17 @@ public class GMonitor {
 		}
 		GMonitor gmon = new GMonitor(multicastAddress, 30l);
 		GMetricInteger testMetric = (GMetricInteger) gmon.createGMetric(host, "Ganglia Int Test", GMetric.VALUE_TYPE_INT, "count", GMetric.SLOPE_UNSPECIFIED, false);
-		GMetricDouble testMetric2 = (GMetricDouble) gmon.createGMetric(host, "Ganglia Double Test", GMetric.VALUE_TYPE_DOUBLE, "count", GMetric.SLOPE_UNSPECIFIED, false);
+		GMetricDouble testMetric2 = (GMetricDouble) gmon.createGMetric(host, "Ganglia Double Test ", GMetric.VALUE_TYPE_DOUBLE, "count2", GMetric.SLOPE_UNSPECIFIED, false);
 
 		Random generator = new Random();
 		int count = 0;
 		double countDouble = 0;
-		System.out.println("Start test");
 		while(true) {
+			Thread.sleep(5000);
 			count = generator.nextInt(100);
 			countDouble = generator.nextDouble() * 100;
 			System.out.println(count);
 			System.out.println(countDouble);
-			Thread.sleep(5000);
 			testMetric.incrementValue(count);
 			testMetric2.incrementValue(countDouble);
 		}
